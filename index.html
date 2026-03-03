@@ -96,8 +96,8 @@ body { background: var(--abc-bg); background-image: radial-gradient(circle, #fff
             {prefix && <span style={{ color: "var(--abc-text-muted)", fontSize: 14 }}>{prefix}</span>}
             <input type="number" value={value} min={min} max={max} step={step}
               onChange={e => onChange(Number(e.target.value))}
-              style={{ background: "none", border: "none", color: "var(--abc-text)", fontSize: 15, fontWeight: 700, fontFamily: "inherit", width: "100%", outline: "none", fontFeatureSettings: "'tnum'" }} />
-            {suffix && <span style={{ color: "var(--abc-text-muted)", fontSize: 12, whiteSpace: "nowrap" }}>{suffix}</span>}
+                  style={{ background: "none", border: "none", color: "#1a1d2b", fontSize: 15,            
+              {suffix && <span style={{ color: "var(--abc-text-muted)", fontSize: 12, whiteSpace: "nowrap" }}>{suffix}</span>}
           </div>
         </div>
       );
@@ -131,10 +131,10 @@ body { background: var(--abc-bg); background-image: radial-gradient(circle, #fff
           <div onClick={e => e.stopPropagation()} style={{ background: "var(--abc-white)", borderRadius: 20, padding: 36, maxWidth: 540, width: "100%", border: "1px solid var(--abc-border)", maxHeight: "90vh", overflowY: "auto", boxShadow: "0 24px 60px rgba(0,0,0,0.12)" }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 28 }}>
               <div>
-                <h2 style={{ margin: 0, fontSize: 20, fontWeight: 700, color: "var(--abc-text)" }}>Team Settings</h2>
-                <p style={{ margin: "4px 0 0", fontSize: 13, color: "var(--abc-text-secondary)" }}>Configure the decision framework</p>
+                <h2 style={{ margin: 0, fontSize: 20, fontWeight: 700, color: "#1a1d2b" }}>Team Settings</h2>
+<p style={{ margin: "4px 0 0", fontSize: 13, color: "#6b7186" }}>Configure the decision framework</p>
               </div>
-              <button onClick={onClose} style={{ background: "var(--abc-bg)", border: "1px solid var(--abc-border)", color: "var(--abc-text-secondary)", width: 32, height: 32, borderRadius: 8, fontSize: 14, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}>✕</button>
+              <button onClick={onClose} style={{ background: "#f0f1f4", border: "1px solid var(--abc-border)", color: "#6b7186", width: 32, height: 32, borderRadius: 8, fontSize: 14, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}>✕</button>
             </div>
 
             {/* Breaking point */}
@@ -164,8 +164,8 @@ body { background: var(--abc-bg); background-image: radial-gradient(circle, #fff
                     borderRadius: 10, padding: "10px 8px", cursor: "pointer", textAlign: "center",
                   }}>
                     <div style={{ fontSize: 16, fontWeight: 800, color: s.threshold === p.val ? "#92400e" : "var(--abc-text)", fontFeatureSettings: "'tnum'" }}>{p.val}</div>
-                    <div style={{ fontSize: 11, fontWeight: 600, color: "var(--abc-text-secondary)", marginTop: 2 }}>{p.label}</div>
-                    <div style={{ fontSize: 9, color: "var(--abc-text-muted)", marginTop: 2 }}>{p.desc}</div>
+                    <div style={{ fontSize: 11, fontWeight: 600, color: "#6b7186", marginTop: 2 }}>{p.label}</div>
+                    <div style={{ fontSize: 9, color: "#9ca0b0", marginTop: 2 }}>{p.desc}</div>
                   </button>
                 ))}
               </div>
