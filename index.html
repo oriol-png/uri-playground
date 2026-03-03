@@ -31,18 +31,21 @@
     const { useState, useMemo } = React;
 
     const FACTORY_DEFAULTS = {
-      arr: 35000, churnProb: 40, hours: 30, hourlyRate: 150, threshold: 250,
+      arr: 35000, churnProb: 40, hours: 30, saveProb: 70,
+      hourlyRate: 150, threshold: 200,
       arrMin: 10000, arrMax: 80000, hoursMin: 5, hoursMax: 80,
     };
 
     const SCENARIOS = [
-      { label: "Low-touch fix", arr: 22000, churnProb: 20, hours: 15, desc: "Minor config tweak" },
-      { label: "Mid-tier save", arr: 35000, churnProb: 45, hours: 30, desc: "Moderate rebuild" },
-      { label: "Enterprise rescue", arr: 50000, churnProb: 70, hours: 45, desc: "Major rework, high-value" },
-      { label: "Quick win", arr: 28000, churnProb: 60, hours: 10, desc: "Small effort, high signal" },
+      { label: "Low-touch fix", arr: 22000, churnProb: 20, hours: 15, saveProb: 80, desc: "Minor config tweak, customer mildly frustrated" },
+      { label: "Mid-tier save", arr: 35000, churnProb: 45, hours: 30, saveProb: 65, desc: "Moderate rebuild, customer at risk" },
+      { label: "Enterprise rescue", arr: 50000, churnProb: 70, hours: 45, saveProb: 55, desc: "Major rework, but weak champion internally" },
+      { label: "Quick win", arr: 28000, churnProb: 60, hours: 10, saveProb: 85, desc: "Small effort, high signal, engaged customer" },
+      { label: "Lost cause?", arr: 30000, churnProb: 80, hours: 40, saveProb: 25, desc: "High churn risk but customer lacks mgmt traction" },
     ];
 
-    function Slider({ label, value, onChange, min, max, step, format, sublabel }) {
+    function Slider({ label, value, onChange, min, max, step, format, sublabel, accent }) {
+      const color = accent || "#6ee7a0";
       return (
         <div style={{ marginBottom: 28 }}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 6 }}>
@@ -53,6 +56,7 @@
             <span style={{ fontSize: 22, fontWeight: 700, color: "#fff", fontFamily: "'Space Mono', monospace" }}>{format(value)}</span>
           </div>
           <input type="range" min={min} max={max} step={step} value={value}
+            className={accent === "#fbbf24" ? "yellow" : ""}
             onChange={e => onChange(Number(e.target.value))} style={{ width: "100%" }} />
           <div style={{ display: "flex", justifyContent: "space-between", fontSize: 10, color: "#555", marginTop: 2 }}>
             <span>{format(min)}</span><span>{format(max)}</span>
@@ -77,7 +81,7 @@
     }
 
     function ScoreGauge({ score, threshold }) {
-      const maxScore = 1500;
+      const maxScore = 1200;
       const pct = Math.min(score / maxScore, 1);
       const threshPct = Math.min(threshold / maxScore, 1);
       const pass = score >= threshold;
@@ -110,24 +114,26 @@
               <button onClick={onClose} style={{ background: "#22242e", border: "none", color: "#9ca3af", width: 32, height: 32, borderRadius: 8, fontSize: 16, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}>✕</button>
             </div>
 
+            {/* Threshold */}
             <div style={{ background: "linear-gradient(135deg, #1a2332 0%, #12131a 100%)", borderRadius: 14, padding: 24, marginBottom: 24, border: "1px solid #2a3a4a" }}>
               <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
                 <div style={{ width: 8, height: 8, borderRadius: "50%", background: "#fbbf24" }} />
                 <span style={{ fontSize: 11, fontWeight: 700, color: "#fbbf24", letterSpacing: "0.1em", textTransform: "uppercase", fontFamily: "'Space Mono', monospace" }}>Breaking Point</span>
               </div>
               <p style={{ fontSize: 12, color: "#6b7080", margin: "4px 0 16px", lineHeight: 1.5 }}>
-                The minimum score to greenlight a re-implementation. Score = (ARR × Churn%) ÷ Hours.
+                Minimum score to greenlight. Score = (ARR × Churn% × Save%) ÷ Hours.
+                <br/><span style={{ fontSize: 11, color: "#555" }}>Calibrated for 12–15 month CAC payback.</span>
               </p>
               <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
-                <input type="range" className="yellow" min={50} max={1000} step={10} value={s.threshold}
+                <input type="range" className="yellow" min={30} max={800} step={10} value={s.threshold}
                   onChange={e => set("threshold", Number(e.target.value))} style={{ flex: 1 }} />
                 <span style={{ fontSize: 32, fontWeight: 700, color: "#fbbf24", fontFamily: "'Space Mono', monospace", minWidth: 70, textAlign: "right" }}>{s.threshold}</span>
               </div>
               <div style={{ marginTop: 16, display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 8 }}>
                 {[
-                  { val: 150, label: "Aggressive", desc: "Accept most requests" },
-                  { val: 300, label: "Balanced", desc: "Moderate filter" },
-                  { val: 500, label: "Conservative", desc: "Only high-value saves" },
+                  { val: 120, label: "Aggressive", desc: "Save most accounts" },
+                  { val: 200, label: "Balanced", desc: "Good ROI filter" },
+                  { val: 400, label: "Conservative", desc: "Only slam dunks" },
                 ].map(p => (
                   <button key={p.val} onClick={() => set("threshold", p.val)} style={{
                     background: s.threshold === p.val ? "#fbbf2418" : "#12131a",
@@ -142,12 +148,17 @@
               </div>
             </div>
 
+            {/* Cost & CAC */}
             <div style={{ marginBottom: 24 }}>
               <div style={{ fontSize: 11, fontWeight: 600, color: "#555", letterSpacing: "0.1em", textTransform: "uppercase", marginBottom: 12, fontFamily: "'Space Mono', monospace" }}>Cost Model</div>
-              <NumberInput label="Hourly Cost" value={s.hourlyRate} onChange={v => set("hourlyRate", v)} min={30} max={500} step={5} prefix="€" suffix="/hour" />
-              <p style={{ fontSize: 11, color: "#555", marginTop: 8, lineHeight: 1.5 }}>Fully loaded: salary + benefits + overhead + opportunity cost.</p>
+              <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
+                <NumberInput label="Hourly Cost" value={s.hourlyRate} onChange={v => set("hourlyRate", v)} min={30} max={500} step={5} prefix="€" suffix="/hour" />
+                <NumberInput label="CAC Payback" value={s.cacPayback} onChange={v => set("cacPayback", v)} min={3} max={36} step={1} suffix="months" />
+              </div>
+              <p style={{ fontSize: 11, color: "#555", marginTop: 8, lineHeight: 1.5 }}>Hourly = fully loaded (salary + overhead + opportunity cost). CAC payback shown in breakdown for reference.</p>
             </div>
 
+            {/* Slider ranges */}
             <div style={{ marginBottom: 24 }}>
               <div style={{ fontSize: 11, fontWeight: 600, color: "#555", letterSpacing: "0.1em", textTransform: "uppercase", marginBottom: 12, fontFamily: "'Space Mono', monospace" }}>Slider Ranges</div>
               <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
@@ -171,26 +182,33 @@
     function App() {
       const [arr, setArr] = useState(FACTORY_DEFAULTS.arr);
       const [churnProb, setChurnProb] = useState(FACTORY_DEFAULTS.churnProb);
+      const [saveProb, setSaveProb] = useState(FACTORY_DEFAULTS.saveProb);
       const [hours, setHours] = useState(FACTORY_DEFAULTS.hours);
       const [showSettings, setShowSettings] = useState(false);
       const [settings, setSettings] = useState({
         threshold: FACTORY_DEFAULTS.threshold, hourlyRate: FACTORY_DEFAULTS.hourlyRate,
+        cacPayback: 13,
         arrMin: FACTORY_DEFAULTS.arrMin, arrMax: FACTORY_DEFAULTS.arrMax,
         hoursMin: FACTORY_DEFAULTS.hoursMin, hoursMax: FACTORY_DEFAULTS.hoursMax,
       });
 
       const calc = useMemo(() => {
-        const expectedSave = arr * (churnProb / 100);
+        const churnFrac = churnProb / 100;
+        const saveFrac = saveProb / 100;
+        const expectedSave = arr * churnFrac * saveFrac;
         const cost = hours * settings.hourlyRate;
         const roi = cost > 0 ? ((expectedSave - cost) / cost) * 100 : 0;
-        const score = hours > 0 ? (arr * (churnProb / 100)) / hours : 0;
+        const score = hours > 0 ? expectedSave / hours : 0;
         const pass = score >= settings.threshold;
-        const breakEvenProb = cost > 0 ? Math.min((cost / arr) * 100, 100) : 0;
+        const breakEvenSaveProb = (churnFrac > 0 && arr > 0 && hours > 0)
+          ? Math.min((cost / (arr * churnFrac)) * 100, 100) : 100;
         const paybackMonths = expectedSave > 0 ? (cost / expectedSave) * 12 : Infinity;
-        return { expectedSave, cost, roi, score, pass, breakEvenProb, paybackMonths };
-      }, [arr, churnProb, hours, settings]);
+        const cacMonths = settings.cacPayback;
+        const netValueVsCac = expectedSave - cost;
+        return { expectedSave, cost, roi, score, pass, breakEvenSaveProb, paybackMonths, cacMonths, netValueVsCac };
+      }, [arr, churnProb, saveProb, hours, settings]);
 
-      function loadScenario(s) { setArr(s.arr); setChurnProb(s.churnProb); setHours(s.hours); }
+      function loadScenario(s) { setArr(s.arr); setChurnProb(s.churnProb); setHours(s.hours); setSaveProb(s.saveProb); }
 
       const panelBg = "#181a23";
 
@@ -221,7 +239,9 @@
                 <span style={{ fontSize: 16, fontWeight: 700, color: "#fbbf24", fontFamily: "'Space Mono', monospace" }}>{settings.threshold}</span>
                 <button onClick={() => setShowSettings(true)} style={{ background: "none", border: "none", color: "#fbbf2480", fontSize: 11, cursor: "pointer", textDecoration: "underline" }}>change</button>
               </div>
-              <div style={{ fontSize: 11, color: "#444", fontFamily: "'Space Mono', monospace" }}>cost: €{settings.hourlyRate}/h</div>
+              <div style={{ fontSize: 11, color: "#444", fontFamily: "'Space Mono', monospace" }}>
+                cost: €{settings.hourlyRate}/h · CAC payback: {settings.cacPayback}mo
+              </div>
             </div>
 
             {/* Scenarios */}
@@ -239,7 +259,27 @@
                 <div style={{ fontSize: 11, fontWeight: 600, color: "#555", letterSpacing: "0.1em", textTransform: "uppercase", marginBottom: 20, fontFamily: "'Space Mono', monospace" }}>Customer Parameters</div>
                 <Slider label="Customer ARR" value={arr} onChange={setArr} min={settings.arrMin} max={settings.arrMax} step={1000} format={v => `€${(v/1000).toFixed(0)}k`} sublabel="annual contract value" />
                 <Slider label="Churn Probability" value={churnProb} onChange={setChurnProb} min={5} max={95} step={5} format={v => `${v}%`} sublabel="if we don't re-implement" />
+
+                {/* Save probability — the new factor */}
+                <div style={{ background: "#12131a", borderRadius: 12, padding: "18px 18px 2px", marginBottom: 20, border: "1px solid #1e2030" }}>
+                  <Slider label="Save Probability" value={saveProb} onChange={setSaveProb} min={10} max={95} step={5} format={v => `${v}%`} sublabel="if we DO re-implement" />
+                  <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginBottom: 14 }}>
+                    {[
+                      { pct: "80-95%", desc: "Engaged champion, clear fix", color: "#6ee7a0" },
+                      { pct: "50-70%", desc: "Fix helps, but other issues too", color: "#fbbf24" },
+                      { pct: "20-40%", desc: "Weak mgmt buy-in, deeper problems", color: "#ff6b6b" },
+                    ].map((g, i) => (
+                      <div key={i} style={{ display: "flex", gap: 6, alignItems: "baseline" }}>
+                        <span style={{ fontSize: 11, fontWeight: 700, color: g.color, fontFamily: "'Space Mono', monospace" }}>{g.pct}</span>
+                        <span style={{ fontSize: 10, color: "#6b7080" }}>{g.desc}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
                 <Slider label="Hours to Invest" value={hours} onChange={setHours} min={settings.hoursMin} max={settings.hoursMax} step={5} format={v => `${v}h`} sublabel="implementation team effort" />
+
+                {/* Churn guide */}
                 <div style={{ background: "#12131a", borderRadius: 10, padding: 14, marginTop: 8 }}>
                   <div style={{ fontSize: 10, color: "#555", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 8, fontFamily: "'Space Mono', monospace" }}>Churn probability guide</div>
                   {[
@@ -258,6 +298,7 @@
 
               {/* Results */}
               <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+                {/* Verdict */}
                 <div style={{
                   background: calc.pass ? "linear-gradient(135deg, #0f2a1a 0%, #162b20 100%)" : "linear-gradient(135deg, #2a1010 0%, #2b1616 100%)",
                   borderRadius: 16, padding: 28, border: `1px solid ${calc.pass ? "#1a4a2e" : "#4a1a1a"}`,
@@ -274,39 +315,44 @@
                   </div>
                 </div>
 
+                {/* Breakdown */}
                 <div style={{ background: panelBg, borderRadius: 16, padding: 28, border: "1px solid #22242e" }}>
                   <div style={{ fontSize: 11, fontWeight: 600, color: "#555", letterSpacing: "0.1em", textTransform: "uppercase", marginBottom: 16, fontFamily: "'Space Mono', monospace" }}>Breakdown</div>
-                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
+                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
                     {[
-                      { label: "Expected Save", value: `€${(calc.expectedSave/1000).toFixed(1)}k`, sub: `${(arr/1000).toFixed(0)}k × ${churnProb}%` },
+                      { label: "Expected Save", value: `€${(calc.expectedSave/1000).toFixed(1)}k`, sub: `${(arr/1000).toFixed(0)}k × ${churnProb}% × ${saveProb}%` },
                       { label: "Re-impl Cost", value: `€${(calc.cost/1000).toFixed(1)}k`, sub: `${hours}h × €${settings.hourlyRate}/h` },
                       { label: "ROI", value: `${calc.roi > 0 ? "+" : ""}${Math.round(calc.roi)}%`, sub: "(save − cost) / cost", color: calc.roi > 0 ? "#6ee7a0" : "#ff6b6b" },
-                      { label: "Payback", value: calc.paybackMonths < 99 ? `${calc.paybackMonths.toFixed(1)}mo` : "n/a", sub: "months to recover cost" },
+                      { label: "Payback", value: calc.paybackMonths < 99 ? `${calc.paybackMonths.toFixed(1)}mo` : "n/a", sub: `vs ${settings.cacPayback}mo CAC payback`, color: calc.paybackMonths <= settings.cacPayback ? "#6ee7a0" : (calc.paybackMonths < 99 ? "#fbbf24" : "#ff6b6b") },
+                      { label: "Net Value", value: `€${(calc.netValueVsCac/1000).toFixed(1)}k`, sub: "expected save − cost", color: calc.netValueVsCac > 0 ? "#6ee7a0" : "#ff6b6b" },
+                      { label: "Break-even Save%", value: `${Math.round(calc.breakEvenSaveProb)}%`, sub: `you set ${saveProb}%`, color: saveProb >= calc.breakEvenSaveProb ? "#6ee7a0" : "#ff6b6b" },
                     ].map((m, i) => (
-                      <div key={i} style={{ background: "#12131a", borderRadius: 10, padding: "14px 16px" }}>
+                      <div key={i} style={{ background: "#12131a", borderRadius: 10, padding: "12px 14px" }}>
                         <div style={{ fontSize: 10, color: "#555", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 4, fontFamily: "'Space Mono', monospace" }}>{m.label}</div>
-                        <div style={{ fontSize: 22, fontWeight: 700, color: m.color || "#fff", fontFamily: "'Space Mono', monospace" }}>{m.value}</div>
+                        <div style={{ fontSize: 20, fontWeight: 700, color: m.color || "#fff", fontFamily: "'Space Mono', monospace" }}>{m.value}</div>
                         <div style={{ fontSize: 10, color: "#444", marginTop: 2 }}>{m.sub}</div>
                       </div>
                     ))}
                   </div>
                 </div>
 
+                {/* Quick read */}
                 <div style={{ background: panelBg, borderRadius: 16, padding: 20, border: "1px solid #22242e" }}>
                   <div style={{ fontSize: 11, fontWeight: 600, color: "#555", letterSpacing: "0.1em", textTransform: "uppercase", marginBottom: 10, fontFamily: "'Space Mono', monospace" }}>Quick read</div>
                   <p style={{ fontSize: 13, color: "#9ca3af", margin: 0, lineHeight: 1.6 }}>
                     {calc.pass
-                      ? `This customer's expected save of €${(calc.expectedSave/1000).toFixed(1)}k justifies the €${(calc.cost/1000).toFixed(1)}k investment. At ${Math.round(calc.roi)}% ROI, you'd recover the cost in ~${calc.paybackMonths.toFixed(1)} months of retained revenue.`
-                      : `The expected save of €${(calc.expectedSave/1000).toFixed(1)}k doesn't justify €${(calc.cost/1000).toFixed(1)}k in implementation hours. ${calc.breakEvenProb > churnProb ? `You'd need at least ${Math.round(calc.breakEvenProb)}% churn probability to break even.` : `Consider reducing scope below ${Math.round(calc.expectedSave / settings.hourlyRate)}h to make it viable.`}`
+                      ? `With a ${churnProb}% churn risk and ${saveProb}% chance of saving them, the expected save of €${(calc.expectedSave/1000).toFixed(1)}k justifies the €${(calc.cost/1000).toFixed(1)}k investment (${Math.round(calc.roi)}% ROI). Payback in ~${calc.paybackMonths.toFixed(1)} months${calc.paybackMonths <= settings.cacPayback ? " — faster than your CAC payback." : "."}`
+                      : `Expected save of €${(calc.expectedSave/1000).toFixed(1)}k (factoring in ${saveProb}% save probability) doesn't justify €${(calc.cost/1000).toFixed(1)}k. ${saveProb < calc.breakEvenSaveProb ? `You'd need at least ${Math.round(calc.breakEvenSaveProb)}% save confidence to break even. The low save probability is the blocker here — likely a customer engagement or management issue.` : `Consider reducing scope below ${Math.round(calc.expectedSave / settings.hourlyRate)}h to make it viable.`}`
                     }
                   </p>
                 </div>
               </div>
             </div>
 
+            {/* Formula footer */}
             <div style={{ textAlign: "center", marginTop: 32, padding: "16px 0", borderTop: "1px solid #1a1c24" }}>
               <code style={{ fontSize: 12, color: "#444", fontFamily: "'Space Mono', monospace" }}>
-                score = (ARR × churn_probability) ÷ hours | greenlight if score ≥ {settings.threshold}
+                score = (ARR × churn% × save%) ÷ hours | greenlight if score ≥ {settings.threshold}
               </code>
             </div>
           </div>
