@@ -31,7 +31,7 @@
       --abc-green-light: #e6faf6;
     }
     * { margin: 0; padding: 0; box-sizing: border-box; }
-body { background: var(--abc-bg); background-image: radial-gradient(circle, #ffffff25 1px, transparent 1px); background-size: 24px 24px; color: var(--abc-text); font-family: 'Inter', -apple-system, system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+    body { background: var(--abc-bg); background-image: radial-gradient(circle, #ffffff25 1px, transparent 1px); background-size: 24px 24px; color: var(--abc-text); font-family: 'Inter', -apple-system, system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
     input[type=range] { height: 6px; border-radius: 3px; cursor: pointer; -webkit-appearance: none; appearance: none; background: var(--abc-border); }
     input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 20px; height: 20px; border-radius: 50%; background: var(--abc-teal); cursor: pointer; border: 3px solid var(--abc-white); box-shadow: 0 1px 4px rgba(0,0,0,0.15); }
     input[type=range].amber::-webkit-slider-thumb { background: var(--abc-amber); }
@@ -74,14 +74,14 @@ body { background: var(--abc-bg); background-image: radial-gradient(circle, #fff
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 8 }}>
             <div style={{ display: "flex", alignItems: "baseline", gap: 8 }}>
               <span style={{ fontSize: 13, fontWeight: 600, color: "#1a1d2b" }}>{label}</span>
-              {sublabel && <span style={{ fontSize: 11, color: "var(--abc-text-muted)" }}>{sublabel}</span>}
+              {sublabel && <span style={{ fontSize: 11, color: "#9ca0b0" }}>{sublabel}</span>}
             </div>
-              <span style={{ fontSize: 20, fontWeight: 700, color: "#1a1d2b", fontFeatureSettings: "'tnum'" }}>{format(value)}</span>
+            <span style={{ fontSize: 20, fontWeight: 700, color: "#1a1d2b", fontFeatureSettings: "'tnum'" }}>{format(value)}</span>
           </div>
           <input type="range" min={min} max={max} step={step} value={value}
             className={amber ? "amber" : ""}
             onChange={e => onChange(Number(e.target.value))} style={{ width: "100%" }} />
-          <div style={{ display: "flex", justifyContent: "space-between", fontSize: 10, color: "var(--abc-text-muted)", marginTop: 4 }}>
+          <div style={{ display: "flex", justifyContent: "space-between", fontSize: 10, color: "#9ca0b0", marginTop: 4 }}>
             <span>{format(min)}</span><span>{format(max)}</span>
           </div>
         </div>
@@ -91,13 +91,13 @@ body { background: var(--abc-bg); background-image: radial-gradient(circle, #fff
     function NumberInput({ label, value, onChange, min, max, step, prefix, suffix }) {
       return (
         <div style={{ flex: 1, minWidth: 130 }}>
-          <label style={{ fontSize: 11, fontWeight: 600, color: "var(--abc-text-secondary)", letterSpacing: "0.03em", textTransform: "uppercase", display: "block", marginBottom: 6 }}>{label}</label>
-          <div style={{ display: "flex", alignItems: "center", background: "var(--abc-bg)", borderRadius: 8, border: "1px solid var(--abc-border)", padding: "8px 12px", gap: 4 }}>
-            {prefix && <span style={{ color: "var(--abc-text-muted)", fontSize: 14 }}>{prefix}</span>}
+          <label style={{ fontSize: 11, fontWeight: 600, color: "#6b7186", letterSpacing: "0.03em", textTransform: "uppercase", display: "block", marginBottom: 6 }}>{label}</label>
+          <div style={{ display: "flex", alignItems: "center", background: "#f0f1f4", borderRadius: 8, border: "1px solid var(--abc-border)", padding: "8px 12px", gap: 4 }}>
+            {prefix && <span style={{ color: "#9ca0b0", fontSize: 14 }}>{prefix}</span>}
             <input type="number" value={value} min={min} max={max} step={step}
               onChange={e => onChange(Number(e.target.value))}
-                  style={{ background: "none", border: "none", color: "#1a1d2b", fontSize: 15,            
-              {suffix && <span style={{ color: "var(--abc-text-muted)", fontSize: 12, whiteSpace: "nowrap" }}>{suffix}</span>}
+              style={{ background: "none", border: "none", color: "#1a1d2b", fontSize: 15, fontWeight: 700, fontFamily: "inherit", width: "100%", outline: "none", fontFeatureSettings: "'tnum'" }} />
+            {suffix && <span style={{ color: "#9ca0b0", fontSize: 12, whiteSpace: "nowrap" }}>{suffix}</span>}
           </div>
         </div>
       );
@@ -132,7 +132,7 @@ body { background: var(--abc-bg); background-image: radial-gradient(circle, #fff
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 28 }}>
               <div>
                 <h2 style={{ margin: 0, fontSize: 20, fontWeight: 700, color: "#1a1d2b" }}>Team Settings</h2>
-<p style={{ margin: "4px 0 0", fontSize: 13, color: "#6b7186" }}>Configure the decision framework</p>
+                <p style={{ margin: "4px 0 0", fontSize: 13, color: "#6b7186" }}>Configure the decision framework</p>
               </div>
               <button onClick={onClose} style={{ background: "#f0f1f4", border: "1px solid var(--abc-border)", color: "#6b7186", width: 32, height: 32, borderRadius: 8, fontSize: 14, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}>✕</button>
             </div>
@@ -163,7 +163,7 @@ body { background: var(--abc-bg); background-image: radial-gradient(circle, #fff
                     border: `1.5px solid ${s.threshold === p.val ? "var(--abc-amber)" : "var(--abc-border)"}`,
                     borderRadius: 10, padding: "10px 8px", cursor: "pointer", textAlign: "center",
                   }}>
-                    <div style={{ fontSize: 16, fontWeight: 800, color: s.threshold === p.val ? "#92400e" : "var(--abc-text)", fontFeatureSettings: "'tnum'" }}>{p.val}</div>
+                    <div style={{ fontSize: 16, fontWeight: 800, color: s.threshold === p.val ? "#92400e" : "#1a1d2b", fontFeatureSettings: "'tnum'" }}>{p.val}</div>
                     <div style={{ fontSize: 11, fontWeight: 600, color: "#6b7186", marginTop: 2 }}>{p.label}</div>
                     <div style={{ fontSize: 9, color: "#9ca0b0", marginTop: 2 }}>{p.desc}</div>
                   </button>
@@ -173,7 +173,7 @@ body { background: var(--abc-bg); background-image: radial-gradient(circle, #fff
 
             {/* Cost */}
             <div style={{ marginBottom: 24 }}>
-              <div style={{ fontSize: 11, fontWeight: 600, color: "var(--abc-text-muted)", letterSpacing: "0.06em", textTransform: "uppercase", marginBottom: 12 }}>Cost Model</div>
+              <div style={{ fontSize: 11, fontWeight: 600, color: "#9ca0b0", letterSpacing: "0.06em", textTransform: "uppercase", marginBottom: 12 }}>Cost Model</div>
               <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
                 <NumberInput label="Hourly Cost" value={s.hourlyRate} onChange={v => set("hourlyRate", v)} min={30} max={500} step={5} prefix="€" suffix="/hour" />
                 <NumberInput label="CAC Payback" value={s.cacPayback} onChange={v => set("cacPayback", v)} min={3} max={36} step={1} suffix="months" />
@@ -182,7 +182,7 @@ body { background: var(--abc-bg); background-image: radial-gradient(circle, #fff
 
             {/* Ranges */}
             <div style={{ marginBottom: 28 }}>
-              <div style={{ fontSize: 11, fontWeight: 600, color: "var(--abc-text-muted)", letterSpacing: "0.06em", textTransform: "uppercase", marginBottom: 12 }}>Slider Ranges</div>
+              <div style={{ fontSize: 11, fontWeight: 600, color: "#9ca0b0", letterSpacing: "0.06em", textTransform: "uppercase", marginBottom: 12 }}>Slider Ranges</div>
               <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
                 <NumberInput label="ARR Min" value={s.arrMin} onChange={v => set("arrMin", v)} min={1000} max={s.arrMax - 1000} step={1000} prefix="€" />
                 <NumberInput label="ARR Max" value={s.arrMax} onChange={v => set("arrMax", v)} min={s.arrMin + 1000} max={500000} step={1000} prefix="€" />
@@ -232,7 +232,7 @@ body { background: var(--abc-bg); background-image: radial-gradient(circle, #fff
       function loadScenario(s) { setArr(s.arr); setChurnProb(s.churnProb); setHours(s.hours); setSaveProb(s.saveProb); }
 
       return (
-        <div style={{ minHeight: "100vh", background: "var(--abc-bg)", padding: "32px 16px" }}>
+        <div style={{ minHeight: "100vh", padding: "32px 16px" }}>
           {showSettings && <SettingsPanel settings={settings} onChange={setSettings} onClose={() => setShowSettings(false)} />}
 
           <div style={{ maxWidth: 900, margin: "0 auto" }}>
@@ -246,7 +246,7 @@ body { background: var(--abc-bg); background-image: radial-gradient(circle, #fff
                 <h1 style={{ fontSize: 26, fontWeight: 800, color: "var(--abc-text)", margin: "0 0 4px 0", lineHeight: 1.2 }}>Re-Implementation ROI Calculator</h1>
                 <p style={{ fontSize: 14, color: "var(--abc-text-secondary)", margin: 0, maxWidth: 480 }}>Should we invest implementation hours on this live customer?</p>
               </div>
-              <button onClick={() => setShowSettings(true)} style={{ background: "var(--abc-white)", border: "1px solid var(--abc-border)", borderRadius: 10, padding: "9px 16px", color: "var(--abc-text-secondary)", fontSize: 13, fontWeight: 600, cursor: "pointer", display: "flex", alignItems: "center", gap: 6, fontFamily: "inherit", boxShadow: "0 1px 3px rgba(0,0,0,0.04)" }}>
+              <button onClick={() => setShowSettings(true)} style={{ background: "var(--abc-white)", border: "1px solid var(--abc-border)", borderRadius: 10, padding: "9px 16px", color: "#1a1d2b", fontSize: 13, fontWeight: 600, cursor: "pointer", display: "flex", alignItems: "center", gap: 6, fontFamily: "inherit", boxShadow: "0 1px 3px rgba(0,0,0,0.04)" }}>
                 <span style={{ fontSize: 15 }}>⚙</span> Settings
               </button>
             </div>
@@ -258,13 +258,13 @@ body { background: var(--abc-bg); background-image: radial-gradient(circle, #fff
                 <span style={{ fontSize: 15, fontWeight: 800, color: "#92400e", fontFeatureSettings: "'tnum'" }}>{settings.threshold}</span>
                 <button onClick={() => setShowSettings(true)} style={{ background: "none", border: "none", color: "#92400e88", fontSize: 11, cursor: "pointer", textDecoration: "underline", fontFamily: "inherit" }}>change</button>
               </div>
-              <span style={{ fontSize: 12, color: "var(--abc-text-muted)", fontFeatureSettings: "'tnum'" }}>€{settings.hourlyRate}/h · {settings.cacPayback}mo CAC</span>
+              <span style={{ fontSize: 12, color: "var(--abc-text-secondary)", fontFeatureSettings: "'tnum'" }}>€{settings.hourlyRate}/h · {settings.cacPayback}mo CAC</span>
             </div>
 
             {/* Scenarios */}
             <div style={{ display: "flex", gap: 6, flexWrap: "wrap", marginBottom: 24 }}>
               {SCENARIOS.map((s, i) => (
-                <button key={i} onClick={() => loadScenario(s)} title={s.desc} style={{ background: "var(--abc-white)", border: "1px solid var(--abc-border)", borderRadius: 8, padding: "6px 14px", color: "var(--abc-text-secondary)", fontSize: 12, fontWeight: 500, cursor: "pointer", fontFamily: "inherit", boxShadow: "0 1px 2px rgba(0,0,0,0.03)", transition: "all 0.15s" }}>
+                <button key={i} onClick={() => loadScenario(s)} title={s.desc} style={{ background: "var(--abc-white)", border: "1px solid var(--abc-border)", borderRadius: 8, padding: "6px 14px", color: "#1a1d2b", fontSize: 12, fontWeight: 500, cursor: "pointer", fontFamily: "inherit", boxShadow: "0 1px 2px rgba(0,0,0,0.03)", transition: "all 0.15s" }}>
                   {s.label}
                 </button>
               ))}
@@ -273,7 +273,7 @@ body { background: var(--abc-bg); background-image: radial-gradient(circle, #fff
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20 }}>
               {/* Left: Inputs */}
               <div style={{ background: "var(--abc-white)", borderRadius: 16, padding: 28, border: "1px solid var(--abc-border)", boxShadow: "0 1px 4px rgba(0,0,0,0.03)" }}>
-                <div style={{ fontSize: 11, fontWeight: 700, color: "var(--abc-text-muted)", letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: 20 }}>Customer Parameters</div>
+                <div style={{ fontSize: 11, fontWeight: 700, color: "#9ca0b0", letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: 20 }}>Customer Parameters</div>
                 <Slider label="Customer ARR" value={arr} onChange={setArr} min={settings.arrMin} max={settings.arrMax} step={1000} format={v => `€${(v/1000).toFixed(0)}k`} sublabel="annual contract" />
                 <Slider label="Churn Probability" value={churnProb} onChange={setChurnProb} min={5} max={95} step={5} format={v => `${v}%`} sublabel="without re-impl" />
 
@@ -288,7 +288,7 @@ body { background: var(--abc-bg); background-image: radial-gradient(circle, #fff
                     ].map((g, i) => (
                       <div key={i} style={{ display: "flex", gap: 5, alignItems: "baseline" }}>
                         <span style={{ fontSize: 11, fontWeight: 700, color: g.color }}>{g.pct}</span>
-                        <span style={{ fontSize: 10, color: "var(--abc-text-secondary)" }}>{g.desc}</span>
+                        <span style={{ fontSize: 10, color: "#6b7186" }}>{g.desc}</span>
                       </div>
                     ))}
                   </div>
@@ -297,8 +297,8 @@ body { background: var(--abc-bg); background-image: radial-gradient(circle, #fff
                 <Slider label="Hours to Invest" value={hours} onChange={setHours} min={settings.hoursMin} max={settings.hoursMax} step={5} format={v => `${v}h`} sublabel="team effort" />
 
                 {/* Churn guide */}
-                <div style={{ background: "var(--abc-bg)", borderRadius: 10, padding: 14 }}>
-                  <div style={{ fontSize: 10, color: "var(--abc-text-muted)", textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: 8, fontWeight: 600 }}>Churn probability guide</div>
+                <div style={{ background: "#f0f1f4", borderRadius: 10, padding: 14 }}>
+                  <div style={{ fontSize: 10, color: "#9ca0b0", textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: 8, fontWeight: 600 }}>Churn probability guide</div>
                   {[
                     { pct: "10-20%", desc: "Mentioned competitor, minor complaints" },
                     { pct: "30-45%", desc: "Escalated, multiple issues, CSM flagged" },
@@ -307,7 +307,7 @@ body { background: var(--abc-bg); background-image: radial-gradient(circle, #fff
                   ].map((g, i) => (
                     <div key={i} style={{ display: "flex", gap: 10, marginBottom: 3, alignItems: "baseline" }}>
                       <span style={{ fontSize: 11, fontWeight: 700, color: "var(--abc-teal-dark)", minWidth: 46 }}>{g.pct}</span>
-                      <span style={{ fontSize: 11, color: "var(--abc-text-secondary)" }}>{g.desc}</span>
+                      <span style={{ fontSize: 11, color: "#6b7186" }}>{g.desc}</span>
                     </div>
                   ))}
                 </div>
@@ -322,11 +322,11 @@ body { background: var(--abc-bg); background-image: radial-gradient(circle, #fff
                   border: `1px solid ${calc.pass ? "#00c9a730" : "#ef444430"}`,
                   boxShadow: "0 1px 4px rgba(0,0,0,0.03)",
                 }}>
-                  <div style={{ fontSize: 11, fontWeight: 700, color: "var(--abc-text-muted)", letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: 14 }}>Verdict</div>
+                  <div style={{ fontSize: 11, fontWeight: 700, color: "#9ca0b0", letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: 14 }}>Verdict</div>
                   <div style={{ display: "flex", alignItems: "baseline", gap: 10, marginBottom: 14 }}>
                     <span style={{ fontSize: 48, fontWeight: 800, color: calc.pass ? "var(--abc-teal-dark)" : "var(--abc-red)", lineHeight: 1, fontFeatureSettings: "'tnum'" }}>{Math.round(calc.score)}</span>
-                    <span style={{ fontSize: 14, color: "var(--abc-text-secondary)" }}>score</span>
-                    <span style={{ fontSize: 13, color: "var(--abc-text-muted)" }}>/ {settings.threshold} needed</span>
+                    <span style={{ fontSize: 14, color: "#6b7186" }}>score</span>
+                    <span style={{ fontSize: 13, color: "#9ca0b0" }}>/ {settings.threshold} needed</span>
                   </div>
                   <ScoreGauge score={calc.score} threshold={settings.threshold} />
                   <div style={{
@@ -341,7 +341,7 @@ body { background: var(--abc-bg); background-image: radial-gradient(circle, #fff
 
                 {/* Breakdown */}
                 <div style={{ background: "var(--abc-white)", borderRadius: 16, padding: 28, border: "1px solid var(--abc-border)", boxShadow: "0 1px 4px rgba(0,0,0,0.03)" }}>
-                  <div style={{ fontSize: 11, fontWeight: 700, color: "var(--abc-text-muted)", letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: 16 }}>Breakdown</div>
+                  <div style={{ fontSize: 11, fontWeight: 700, color: "#9ca0b0", letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: 16 }}>Breakdown</div>
                   <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
                     {[
                       { label: "Expected Save", value: `€${(calc.expectedSave/1000).toFixed(1)}k`, sub: `${(arr/1000).toFixed(0)}k × ${churnProb}% × ${saveProb}%` },
@@ -351,10 +351,10 @@ body { background: var(--abc-bg); background-image: radial-gradient(circle, #fff
                       { label: "Net Value", value: `€${(calc.netValueVsCac/1000).toFixed(1)}k`, sub: "expected save − cost", color: calc.netValueVsCac > 0 ? "var(--abc-teal-dark)" : "var(--abc-red)" },
                       { label: "Break-even Save%", value: `${Math.round(calc.breakEvenSaveProb)}%`, sub: `you set ${saveProb}%`, color: saveProb >= calc.breakEvenSaveProb ? "var(--abc-teal-dark)" : "var(--abc-red)" },
                     ].map((m, i) => (
-                      <div key={i} style={{ background: "var(--abc-bg)", borderRadius: 10, padding: "12px 14px" }}>
-                        <div style={{ fontSize: 10, color: "var(--abc-text-muted)", textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: 4, fontWeight: 600 }}>{m.label}</div>
-                        <div style={{ fontSize: 20, fontWeight: 800, color: m.color || "var(--abc-text)", fontFeatureSettings: "'tnum'" }}>{m.value}</div>
-                        <div style={{ fontSize: 10, color: "var(--abc-text-muted)", marginTop: 2 }}>{m.sub}</div>
+                      <div key={i} style={{ background: "#f0f1f4", borderRadius: 10, padding: "12px 14px" }}>
+                        <div style={{ fontSize: 10, color: "#9ca0b0", textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: 4, fontWeight: 600 }}>{m.label}</div>
+                        <div style={{ fontSize: 20, fontWeight: 800, color: m.color || "#1a1d2b", fontFeatureSettings: "'tnum'" }}>{m.value}</div>
+                        <div style={{ fontSize: 10, color: "#9ca0b0", marginTop: 2 }}>{m.sub}</div>
                       </div>
                     ))}
                   </div>
@@ -362,8 +362,8 @@ body { background: var(--abc-bg); background-image: radial-gradient(circle, #fff
 
                 {/* Quick read */}
                 <div style={{ background: "var(--abc-white)", borderRadius: 16, padding: 20, border: "1px solid var(--abc-border)", boxShadow: "0 1px 4px rgba(0,0,0,0.03)" }}>
-                  <div style={{ fontSize: 11, fontWeight: 700, color: "var(--abc-text-muted)", letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: 10 }}>Quick read</div>
-                  <p style={{ fontSize: 13, color: "var(--abc-text-secondary)", margin: 0, lineHeight: 1.7 }}>
+                  <div style={{ fontSize: 11, fontWeight: 700, color: "#9ca0b0", letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: 10 }}>Quick read</div>
+                  <p style={{ fontSize: 13, color: "#6b7186", margin: 0, lineHeight: 1.7 }}>
                     {calc.pass
                       ? `With a ${churnProb}% churn risk and ${saveProb}% chance of saving them, the expected save of €${(calc.expectedSave/1000).toFixed(1)}k justifies the €${(calc.cost/1000).toFixed(1)}k investment (${Math.round(calc.roi)}% ROI). Payback in ~${calc.paybackMonths.toFixed(1)} months${calc.paybackMonths <= settings.cacPayback ? " — faster than your CAC payback." : "."}`
                       : `Expected save of €${(calc.expectedSave/1000).toFixed(1)}k (factoring in ${saveProb}% save probability) doesn't justify €${(calc.cost/1000).toFixed(1)}k. ${saveProb < calc.breakEvenSaveProb ? `You'd need at least ${Math.round(calc.breakEvenSaveProb)}% save confidence to break even — likely a customer engagement or management issue.` : `Consider reducing scope below ${Math.round(calc.expectedSave / settings.hourlyRate)}h to make it viable.`}`
@@ -374,8 +374,8 @@ body { background: var(--abc-bg); background-image: radial-gradient(circle, #fff
             </div>
 
             {/* Footer */}
-            <div style={{ textAlign: "center", marginTop: 32, padding: "16px 0", borderTop: "1px solid var(--abc-border)" }}>
-              <code style={{ fontSize: 12, color: "var(--abc-text-muted)" }}>
+            <div style={{ textAlign: "center", marginTop: 32, padding: "16px 0", borderTop: "1px solid #ffffff15" }}>
+              <code style={{ fontSize: 12, color: "var(--abc-text-secondary)" }}>
                 score = (ARR × churn% × save%) ÷ hours | greenlight if score ≥ {settings.threshold}
               </code>
             </div>
