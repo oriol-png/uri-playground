@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PDT Squad Roadmap · Q3 '26 onward</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#1c1830; --ink-soft:#5b556f; --ink-faint:#928bA6;
+    --p1:#2563eb; --p2:#7c3aed; --p3:#0d9488;
+    --line:#e7e3f1;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:#f3f1ea;color:var(--ink);font-family:'Archivo',sans-serif;-webkit-font-smoothing:antialiased;padding:34px 28px 48px;}
+  .page{max-width:1320px;margin:0 auto;}
+  .mono{font-family:'JetBrains Mono',monospace;}
+
+  .head{display:flex;justify-content:space-between;align-items:flex-start;gap:28px;flex-wrap:wrap;margin-bottom:18px;}
+  .kicker{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--ink-faint);margin-bottom:8px;}
+  h1{font-size:32px;font-weight:900;letter-spacing:-1px;margin:0;line-height:1.02;}
+  .vision{font-size:14px;color:var(--ink-soft);margin-top:9px;max-width:560px;line-height:1.5;}
+  .vision b{color:var(--ink);font-weight:700;}
+
+  .pillars{display:flex;flex-direction:column;gap:7px;min-width:240px;}
+  .pillar{display:flex;align-items:center;gap:9px;font-size:12px;color:var(--ink-soft);}
+  .pillar i{width:11px;height:11px;border-radius:3px;flex:0 0 auto;}
+  .pillar b{color:var(--ink);font-weight:700;}
+  .pillar span{color:var(--ink-faint);}
+
+  .legend{display:flex;align-items:center;gap:9px;flex-wrap:wrap;margin:6px 0 14px;padding:11px 14px;background:#fffefb;border:1px solid var(--line);border-radius:12px;}
+  .legend .lbl{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--ink-faint);margin-right:4px;}
+  .chip{font-family:'JetBrains Mono',monospace;font-size:9.5px;font-weight:700;letter-spacing:.4px;padding:2.5px 7px;border-radius:6px;text-transform:uppercase;white-space:nowrap;}
+  .c-com{background:#16121f;color:#fff;}
+  .c-spk{background:#b45309;color:#fff;}
+  .c-dsc{background:#1d4ed8;color:#fff;}
+  .c-dir{background:#ede9fe;color:#6d28d9;}
+  .c-str{background:#e7e5ea;color:#55505f;}
+  .c-sup{background:#fde68a;color:#8a5a00;}
+  .c-bkl{background:transparent;color:#8a8398;border:1px dashed #cdc6dd;}
+
+  .wrap{overflow-x:auto;border-radius:18px;}
+  .board{min-width:1200px;background:linear-gradient(180deg,#fffefc 0%,#faf8f3 100%);border:1px solid var(--line);border-radius:18px;padding:18px 18px 24px;box-shadow:0 18px 40px -28px rgba(40,28,80,.35);}
+  .matrix{display:grid;grid-template-columns:206px 1fr 1fr 0.8fr;gap:10px;}
+
+  .corner{display:flex;align-items:flex-end;padding-bottom:8px;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:1.5px;color:var(--ink-faint);}
+  .qh{background:#16121f;color:#fff;border-radius:11px;padding:11px 14px;text-align:center;}
+  .qh b{font-size:15px;font-weight:800;letter-spacing:.5px;}
+  .qh small{display:block;font-family:'JetBrains Mono',monospace;font-weight:500;font-size:9.5px;letter-spacing:.8px;color:#a99fc4;margin-top:2px;text-transform:uppercase;}
+
+  .grp{grid-column:1 / -1;display:flex;align-items:center;gap:9px;margin:7px 0 -1px;padding:7px 13px;background:rgba(124,58,237,.07);border:1px dashed #d6cdf0;border-radius:9px;font-size:11.5px;color:#6d28d9;font-weight:600;}
+  .grp.newq{background:rgba(16,185,129,.08);border-color:#b8e8d6;color:#0f766e;}
+  .grp .ic{font-size:13px;}
+  .grp b{color:#4c1d95;font-weight:800;}
+  .grp.newq b{color:#0f766e;}
+
+  .lane{border-radius:12px;padding:12px 13px;color:#fff;display:flex;flex-direction:column;justify-content:center;min-height:80px;box-shadow:inset 0 0 0 1px rgba(255,255,255,.06);}
+  .lane b{font-size:14.5px;font-weight:800;letter-spacing:-.2px;}
+  .lane .desc{font-size:10px;opacity:.9;margin-top:4px;line-height:1.35;font-weight:500;}
+  .lane .own{font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:700;letter-spacing:.3px;margin-top:7px;background:rgba(255,255,255,.18);align-self:flex-start;padding:2px 7px;border-radius:5px;}
+  .new{display:inline-block;background:#34d399;color:#053a29;font-family:'JetBrains Mono',monospace;font-size:8px;font-weight:700;letter-spacing:.5px;padding:1.5px 5px;border-radius:5px;margin-left:7px;vertical-align:middle;}
+
+  .cell{display:flex;flex-direction:column;gap:8px;}
+  .card{background:#fff;border:1px solid #efecf6;border-left:3px solid #cdc6dd;border-radius:9px;padding:8px 10px;box-shadow:0 1px 2px rgba(30,20,60,.05);}
+  .card.p1{border-left-color:var(--p1);}
+  .card.p2{border-left-color:var(--p2);}
+  .card.p3{border-left-color:var(--p3);}
+  .card .top{display:flex;justify-content:space-between;align-items:flex-start;gap:7px;}
+  .nm{font-size:12px;font-weight:650;line-height:1.28;color:#221d36;}
+  .mt{font-size:10px;color:#7a7390;margin-top:4px;line-height:1.35;}
+  .ghost{background:transparent;border:1px dashed #d8d2e6;box-shadow:none;border-left:3px dashed #cfc8df;}
+  .ghost .nm{color:#8a8398;font-weight:600;}
+  .ghost .tag{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.4px;color:#a39cb5;text-transform:uppercase;}
+
+  .foot{margin-top:18px;font-size:11.5px;color:var(--ink-faint);line-height:1.55;max-width:1040px;}
+  .foot b{color:var(--ink-soft);}
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="head">
+    <div>
+      <div class="kicker">PDT · Q3 '26 Planning</div>
+      <h1>Squad Roadmap · Q3 '26 onward</h1>
+      <p class="vision"><b>One platform. Connect everything. Act anywhere.</b> Execution mode, delivering now. <b>Engine</b> and <b>Core AI</b> each split into two squads after Q3, and a new <b>Consolidation</b> squad forms in Q4.</p>
+    </div>
+    <div class="pillars">
+      <div class="pillar"><i style="background:var(--p1)"></i><span><b>01 Core platform</b> · modeling, reporting, enterprise readiness</span></div>
+      <div class="pillar"><i style="background:var(--p2)"></i><span><b>02 Agentic AI inside</b> · agents that draft, model, audit</span></div>
+      <div class="pillar"><i style="background:var(--p3)"></i><span><b>03 Open access via MCP</b> · reachable from Claude, ChatGPT</span></div>
+    </div>
+  </div>
+
+  <div class="legend">
+    <span class="lbl">Status</span>
+    <span class="chip c-com">Committed</span>
+    <span class="chip c-spk">Spike</span>
+    <span class="chip c-dsc">Discovery</span>
+    <span class="chip c-dir">Direction</span>
+    <span class="chip c-str">Stretch</span>
+    <span class="chip c-sup">Support</span>
+    <span class="chip c-bkl">Backlog</span>
+    <span style="flex:1"></span>
+    <span class="lbl" style="margin-right:0">Card border = pillar · pill = squad lead</span>
+  </div>
+
+  <div style="display:flex;gap:9px;align-items:flex-start;margin:2px 0 14px;padding:11px 14px;background:#eef4ff;border:1px solid #cdddff;border-left:3px solid var(--p1);border-radius:11px;font-size:12px;color:var(--ink-soft);line-height:1.5;"><span style="font-size:14px;">💵</span><span><b style="color:var(--ink);">Q3, and likely Q4, are biased to pipeline first, customer second.</b> May create some customer friction, but from our assessment none of the pushed features carries a Tier 1 churn risk.</span></div>
+
+  <div class="wrap"><div class="board"><div class="matrix">
+
+    <div class="corner">SQUAD</div>
+    <div class="qh"><b>Q3 '26</b><small>Commit</small></div>
+    <div class="qh"><b>Q4 '26</b><small>Plan · post-split</small></div>
+    <div class="qh"><b>H1 '27</b><small>Direction · tentative</small></div>
+
+    <div class="grp"><span class="ic">🔀</span><span><b>Engine domain</b> · one squad in Q3, splits into <b>Engine</b> + <b>Modeling</b> from Q4</span></div>
+
+    <div class="lane" style="background:linear-gradient(135deg,#4338ca,#4f46e5)"><b>Engine</b><div class="desc">Platform · performance · weekly</div></div>
+    <div class="cell">
+      <div class="card p1"><div class="top"><span class="nm">Weekly granularity v1</span><span class="chip c-com">Committed</span></div><div class="mt">Ships in Q3 (spike done) · dep: all teams</div></div>
+      <div class="card p1"><div class="top"><span class="nm">Override formulas w/ manual inputs</span><span class="chip c-spk">Spike</span></div><div class="mt">Spike now · Q3 joint with Data input · Data finishes spillover in Q4</div></div>
+      <div class="card p1"><div class="top"><span class="nm">Engine "Lazy mode"</span><span class="chip c-com">Committed</span></div><div class="mt">~20% faster calculations</div></div>
+      <div class="card p2"><div class="top"><span class="nm">AI Modeler services</span><span class="chip c-com">Committed</span></div><div class="mt">Unblocks AI Labs end-to-end PoC</div></div>
+    </div>
+    <div class="cell">
+      <div class="card p1"><div class="top"><span class="nm">Manual inputs in actuals</span><span class="chip c-dir">Direction</span></div></div>
+      <div class="card p1"><div class="top"><span class="nm">New financial formulas</span><span class="chip c-dir">Direction</span></div></div>
+      <div class="card p3"><div class="top"><span class="nm">MCP services</span><span class="chip c-dir">Direction</span></div><div class="mt">Placeholder · write-back enablement</div></div>
+    </div>
+    <div class="cell">
+      <div class="card p1"><div class="top"><span class="nm">Model diagram in Spaces</span><span class="chip c-dir">Direction</span></div><div class="mt">Investor / bank sharing unlock</div></div>
+      <div class="card p1"><div class="top"><span class="nm">Cohorts v2</span><span class="chip c-dir">Direction</span></div></div>
+    </div>
+
+    <div class="lane" style="background:linear-gradient(135deg,#6d28d9,#7c3aed)"><b>Modeling<span class="new">NEW Q4</span></b><div class="desc">AI-native model building</div></div>
+    <div class="cell">
+      <div class="card ghost"><div class="top"><span class="nm">↳ Inside Engine this quarter</span></div><div class="mt">AI Modeler PoC · 2 services being built</div></div>
+    </div>
+    <div class="cell">
+      <div class="card p2"><div class="top"><span class="nm">AI Modeler beyond full-model gen</span><span class="chip c-dir">Direction</span></div><div class="mt">Edit specific variable parts · with Engine</div></div>
+      <div class="card p2"><div class="top"><span class="nm">Multi-step autonomous modeling</span><span class="chip c-dir">Direction</span></div></div>
+      <div class="card p2"><div class="top"><span class="nm">Dimension changes via AI Modeler</span><span class="chip c-spk">Spike</span></div></div>
+    </div>
+    <div class="cell">
+      <div class="card p2"><div class="top"><span class="nm">Fully end-to-end modeler</span><span class="chip c-dir">Direction</span></div><div class="mt">North-star placeholder · model upload → fully built model</div></div>
+      <div class="card p2"><div class="top"><span class="nm">Scenario Studio</span><span class="chip c-dir">Direction</span></div><div class="mt">Thin AI layer · mostly replaced by AI Modeler</div></div>
+    </div>
+
+    <div class="lane" style="background:linear-gradient(135deg,#7c3aed,#9333ea)"><b>Reporting</b><div class="desc">Spaces · charts · AI discovery</div></div>
+    <div class="cell">
+      <div class="card p1"><div class="top"><span class="nm">Weekly granularity</span><span class="chip c-com">Committed</span></div><div class="mt">Large impact · ships in Q3</div></div>
+      <div class="card p2"><div class="top"><span class="nm">AI Spaces v2 (plan mode)</span><span class="chip c-com">Committed</span></div><div class="mt">Expand if capacity (AI-gen functionality)</div></div>
+      <div class="card p1"><div class="top"><span class="nm">Date-range space control</span><span class="chip c-com">Committed</span></div><div class="mt">Pushed Q2→Q3 · incl. via the Agent</div></div>
+      <div class="card p3"><div class="top"><span class="nm">AI discovery track</span><span class="chip c-dsc">Discovery</span></div><div class="mt">Charts, bulk/block edits, draft mode, MCP write-back → enables Q4</div></div>
+      <div class="card p1"><div class="top"><span class="nm">Mobile-responsive</span><span class="chip c-com">Committed</span></div></div>
+    </div>
+    <div class="cell">
+      <div class="card p2"><div class="top"><span class="nm">Reporting AI direction</span><span class="chip c-dir">Direction</span></div><div class="mt">From Q3 discovery</div></div>
+      <div class="card p2"><div class="top"><span class="nm">New charts via AI</span><span class="chip c-dir">Direction</span></div><div class="mt">Pending Q3 AI discovery</div></div>
+      <div class="card p1"><div class="top"><span class="nm">Postponed BE (part 1)</span><span class="chip c-bkl">Backlog</span></div><div class="mt">Total rows/columns · custom variance calc/format</div></div>
+    </div>
+    <div class="cell">
+      <div class="card p2"><div class="top"><span class="nm">Reporting AI</span><span class="chip c-dir">Direction</span></div><div class="mt">Agent-built spaces · proactive insights</div></div>
+      <div class="card p1"><div class="top"><span class="nm">Postponed BE (part 2)</span><span class="chip c-bkl">Backlog</span></div><div class="mt">Column rename · remaining quality-of-life</div></div>
+    </div>
+
+    <div class="lane" style="background:linear-gradient(135deg,#9333ea,#a21caf)"><b>Data input</b><div class="desc">Inputs · ingestion · activity</div></div>
+    <div class="cell">
+      <div class="card p2"><div class="top"><span class="nm">AI for Data Entry</span><span class="chip c-com">Committed</span></div><div class="mt">Agentic manual inputs · demo/sales differentiator</div></div>
+      <div class="card p2"><div class="top"><span class="nm">AI Ingestion</span><span class="chip c-com">Committed</span></div><div class="mt">AI proposes dataset config · faster POC conversion</div></div>
+      <div class="card p2"><div class="top"><span class="nm">AI for Activity Log</span><span class="chip c-com">Committed</span></div><div class="mt">Conversational · manual inputs only (Q3)</div></div>
+      <div class="card p1"><div class="top"><span class="nm">Override formulas (lead)</span><span class="chip c-com">Committed</span></div><div class="mt">Data input leads · with Engine · finish Q4 (Q3 if capacity)</div></div>
+      <div class="card p1"><div class="top"><span class="nm">Weekly (support)</span><span class="chip c-sup">Support</span></div><div class="mt">Support Engine + Reporting</div></div>
+    </div>
+    <div class="cell">
+      <div class="card p1"><div class="top"><span class="nm">Override formulas · finish</span><span class="chip c-com">Committed</span></div><div class="mt">Completes Q3 spillover (Q3 if capacity)</div></div>
+      <div class="card p2"><div class="top"><span class="nm">AI audit trail</span><span class="chip c-dir">Direction</span></div><div class="mt">Full audit trail · all changes, not just manual inputs</div></div>
+      <div class="card p2"><div class="top"><span class="nm">Finish AI data entry for VDS</span><span class="chip c-dir">Direction</span></div></div>
+      <div class="card p1"><div class="top"><span class="nm">DS Status</span><span class="chip c-sup">Support</span></div><div class="mt">Detect & stop stuck datasets (delayed)</div></div>
+    </div>
+    <div class="cell">
+      <div class="card p2"><div class="top"><span class="nm">AI ingestion v2</span><span class="chip c-dir">Direction</span></div><div class="mt">Auto-config · review-and-confirm</div></div>
+      <div class="card p2"><div class="top"><span class="nm">AI data quality</span><span class="chip c-dir">Direction</span></div><div class="mt">Anomaly detection at source</div></div>
+      <div class="card p1"><div class="top"><span class="nm">Dimensions performance</span><span class="chip c-sup">Support</span></div><div class="mt">Faster reads/edits</div></div>
+    </div>
+
+    <div class="grp newq"><span class="ic">🔀</span><span><b>Core AI domain</b> · one squad in Q3, splits into <b>AI Labs</b> + <b>Core</b> from Q4</span></div>
+
+    <div class="lane" style="background:linear-gradient(135deg,#0f766e,#0d9488)"><b>AI Labs<span class="new">NEW Q4</span></b><div class="desc">R&D · agentic POCs · MCP</div></div>
+    <div class="cell">
+      <div class="card p2"><div class="top"><span class="nm">AI Agent Hub MVP</span><span class="chip c-com">Committed</span></div><div class="mt">Skills · multi-thread · plan mode · export PDF/slides/Excel</div></div>
+      <div class="card p2"><div class="top"><span class="nm">AI PoCs (timeboxed)</span><span class="chip c-dsc">Discovery</span></div><div class="mt">Org context · web/external · proactive insights · goal-seek narrative · AI typing layer</div></div>
+      <div class="card p3"><div class="top"><span class="nm">MCP depth</span><span class="chip c-com">Committed</span></div><div class="mt">Read calc outputs · datasets+spaces in / spaces+inputs+formulas out</div></div>
+      <div class="card p2"><div class="top"><span class="nm">AI Modeler (with Engine)</span><span class="chip c-com">Committed</span></div><div class="mt">Main bet · PoC done · v1 scoping with Engine</div></div>
+      <div class="card ghost"><div class="tag">Core AI squad in Q3</div></div>
+    </div>
+    <div class="cell">
+      <div class="card p2"><div class="top"><span class="nm">Skills / capabilities hub</span><span class="chip c-dir">Direction</span></div><div class="mt">Chain tools+skills · save & schedule workflows</div></div>
+      <div class="card p2"><div class="top"><span class="nm">Absorb validated PoCs</span><span class="chip c-dir">Direction</span></div><div class="mt">Hand to squads · keep Labs lean</div></div>
+      <div class="card p3"><div class="top"><span class="nm">MCP read+write expansion</span><span class="chip c-dir">Direction</span></div></div>
+    </div>
+    <div class="cell">
+      <div class="card p2"><div class="top"><span class="nm">Agent transparency</span><span class="chip c-dir">Direction</span></div><div class="mt">Auditable steps · vs Pigment black box</div></div>
+      <div class="card p3"><div class="top"><span class="nm">Multi-model backend + MCP write</span><span class="chip c-dir">Direction</span></div></div>
+    </div>
+
+    <div class="lane" style="background:linear-gradient(135deg,#1d4ed8,#2563eb)"><b>Core<span class="new">NEW Q4</span></b><div class="desc">Enterprise readiness · all pending hiring, less firm</div></div>
+    <div class="cell">
+      <div class="card p1"><div class="top"><span class="nm">Clone orgs</span><span class="chip c-str">Stretch</span></div><div class="mt">Solutioning + mockups ready · start Q3, likely finish Q4</div></div>
+      <div class="card p1"><div class="top"><span class="nm">Multi-tenant</span><span class="chip c-str">Stretch</span></div><div class="mt">One user → many orgs · start Q3, likely finish Q4</div></div>
+      <div class="card p1"><div class="top"><span class="nm">Export / Import models</span><span class="chip c-dsc">Discovery</span></div></div>
+      <div class="card ghost"><div class="tag">Core AI squad in Q3</div></div>
+    </div>
+    <div class="cell">
+      <div class="card p1"><div class="top"><span class="nm">Finish Clone / Multi-tenant</span><span class="chip c-str">Stretch</span></div><div class="mt">Carried from Q3</div></div>
+      <div class="card p1"><div class="top"><span class="nm">SCIM</span><span class="chip c-str">Stretch</span></div><div class="mt">Delivery if staffed</div></div>
+      <div class="card p1"><div class="top"><span class="nm">Multi-region</span><span class="chip c-dsc">Discovery</span></div><div class="mt">Scoping in Q4 · delivery H1</div></div>
+      <div class="card p1"><div class="top"><span class="nm">Home (front-end)</span><span class="chip c-dir">Direction</span></div><div class="mt">Likely Q4</div></div>
+    </div>
+    <div class="cell">
+      <div class="card p1"><div class="top"><span class="nm">Multi-region delivery</span><span class="chip c-dir">Direction</span></div><div class="mt">Incl. US data residency (e.g. Placer.ai)</div></div>
+      <div class="card p1"><div class="top"><span class="nm">FX / multi-currency</span><span class="chip c-dir">Direction</span></div></div>
+      <div class="card p1"><div class="top"><span class="nm">Audit trail</span><span class="chip c-dir">Direction</span></div></div>
+    </div>
+
+    <div class="lane" style="background:linear-gradient(135deg,#1d4ed8,#3b82f6)"><b>Integrations</b><div class="desc">Connectors · pipeline</div></div>
+    <div class="cell">
+      <div class="card p1"><div class="top"><span class="nm">Decouple datasets / integrations</span><span class="chip c-com">Committed</span></div><div class="mt">Pending Q2 PoCs</div></div>
+      <div class="card p1"><div class="top"><span class="nm">Mandatory connector changes</span><span class="chip c-com">Committed</span></div><div class="mt">NetSuite v2 · QuickBooks · HubSpot</div></div>
+      <div class="card p1"><div class="top"><span class="nm">Power BI</span><span class="chip c-com">Committed</span></div><div class="mt">~1.5 sprints</div></div>
+      <div class="card p1"><div class="top"><span class="nm">Tabs</span><span class="chip c-com">Committed</span></div><div class="mt">Unblocks partnership opportunities</div></div>
+    </div>
+    <div class="cell">
+      <div class="card p1"><div class="top"><span class="nm">Datev</span><span class="chip c-dir">Direction</span></div><div class="mt">Pending Q2 PoCs</div></div>
+      <div class="card p1"><div class="top"><span class="nm">Observability: statuses & alerts</span><span class="chip c-dir">Direction</span></div><div class="mt">Surface sync health to customers</div></div>
+      <div class="card p1"><div class="top"><span class="nm">Self-healing · zero customer noise</span><span class="chip c-dir">Direction</span></div><div class="mt">Kill email noise / manual fixes</div></div>
+      <div class="card p1"><div class="top"><span class="nm">GSheets / Excel improvements</span><span class="chip c-dir">Direction</span></div><div class="mt">Q4 candidate</div></div>
+      <div class="card p1"><div class="top"><span class="nm">Databricks · Odoo</span><span class="chip c-dir">Direction</span></div><div class="mt">Q4 candidates</div></div>
+    </div>
+    <div class="cell">
+      <div class="card p1"><div class="top"><span class="nm">Warehouse-native, bi-directional</span><span class="chip c-dir">Direction</span></div><div class="mt">Deepen Snowflake / Databricks</div></div>
+      <div class="card p1"><div class="top"><span class="nm">Reverse-ETL / warehouse activation</span><span class="chip c-dir">Direction</span></div><div class="mt">Write enriched data back out</div></div>
+      <div class="card p1"><div class="top"><span class="nm">Observability overflow / SLAs</span><span class="chip c-dir">Direction</span></div><div class="mt">If Q4 too packed</div></div>
+    </div>
+
+    <div class="grp newq"><span class="ic">🆕</span><span><b>Consolidation</b> · new squad in Q4 · net-new multi-entity / intercompany consolidation product, mostly Product roles</span></div>
+
+    <div class="lane" style="background:linear-gradient(135deg,#475569,#64748b)"><b>Consolidation<span class="new">NEW Q4</span></b><div class="desc">Multi-entity / intercompany consolidation</div></div>
+    <div class="cell">
+      <div class="card ghost"><div class="top"><span class="nm">↳ Scoping in Q3</span></div><div class="mt">Market-expert hire to size the opportunity · not staffed in Q3</div></div>
+    </div>
+    <div class="cell">
+      <div class="card p1"><div class="top"><span class="nm">Exploration: multi-entity consolidation</span><span class="chip c-dsc">Discovery</span></div><div class="mt">Net-new product · mostly Product roles · scope & validate</div></div>
+    </div>
+    <div class="cell">
+      <div class="card p1"><div class="top"><span class="nm">Potential delivery · high uncertainty</span><span class="chip c-dir">Direction</span></div><div class="mt">Dependent on Q4 exploration + hiring</div></div>
+      <div class="card p1"><div class="top"><span class="nm">Multi-entity consolidation</span><span class="chip c-dir">Direction</span></div><div class="mt">Eliminations · FX translation · ownership %</div></div>
+    </div>
+
+  </div></div></div>
+
+  <div class="foot">
+    <b>How to read this.</b> Columns are quarters; Q3 is the commit horizon, Q4 is planned post-split, H1 '27 is directional. Rows are squads. The 🔀 bands mark where one squad becomes two after Q3 (Engine → Engine + Modeling; Core AI → AI Labs + Core); the 🆕 band marks the new Consolidation squad forming in Q4. Ghost cards show where a future squad's work lives inside its parent during Q3. Card colour = vision pillar; chip = delivery confidence. Goes from 5 squads in Q3 to 8 in Q4. Source: team Q3/Q4 squad goals (Product Weekly) + Q3 vision deck.
+  </div>
+
+</div>
+</body>
+</html>
