@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Undermarketed Releases — Abacum (Feb–Jun 2026)</title>
+<style>
+  :root{
+    --bg:#0b0a14; --bg2:#12101f; --card:#181527; --card2:#1f1b30;
+    --line:#2a2540; --ink:#ece9f5; --mut:#a39fbd; --dim:#76728f;
+    --pur:#8b5cf6; --pur2:#a78bfa; --vio:#6d28d9;
+    --grn:#34d399; --amb:#fbbf24; --red:#fb7185; --blu:#60a5fa;
+    --hi:#c4b5fd;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0;background:radial-gradient(1200px 700px at 80% -10%,#241a44 0,transparent 55%),
+                       radial-gradient(900px 600px at -10% 10%,#1a1340 0,transparent 50%),var(--bg);
+    color:var(--ink);font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+    -webkit-font-smoothing:antialiased;line-height:1.55;
+  }
+  .wrap{max-width:1080px;margin:0 auto;padding:48px 28px 80px}
+  .kicker{display:inline-flex;align-items:center;gap:8px;font-size:12.5px;letter-spacing:.14em;text-transform:uppercase;
+    color:var(--pur2);font-weight:700;background:rgba(139,92,246,.12);border:1px solid rgba(139,92,246,.3);
+    padding:6px 12px;border-radius:999px;margin-bottom:22px}
+  h1{font-size:clamp(30px,5vw,50px);line-height:1.05;margin:0 0 18px;letter-spacing:-.02em;font-weight:800}
+  h1 .g{background:linear-gradient(100deg,#a78bfa,#f0abfc 60%,#60a5fa);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .lede{font-size:18px;color:var(--mut);max-width:760px;margin:0 0 8px}
+  .meta{font-size:13px;color:var(--dim);margin-top:18px}
+
+  /* hero contrast stat */
+  .contrast{display:grid;grid-template-columns:1fr auto 1fr;gap:18px;align-items:stretch;margin:42px 0 8px}
+  @media(max-width:720px){.contrast{grid-template-columns:1fr;}}
+  .stat{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:24px}
+  .stat .n{font-size:46px;font-weight:800;letter-spacing:-.02em;line-height:1}
+  .stat .n.bad{color:var(--red)} .stat .n.ok{color:var(--grn)}
+  .stat .l{color:var(--mut);font-size:14px;margin-top:8px}
+  .vs{display:flex;align-items:center;justify-content:center;color:var(--dim);font-weight:700;font-size:14px}
+
+  h2{font-size:13px;letter-spacing:.16em;text-transform:uppercase;color:var(--pur2);margin:64px 0 18px;font-weight:700}
+  .misses{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+  @media(max-width:820px){.misses{grid-template-columns:1fr}}
+  .miss{background:linear-gradient(180deg,var(--card2),var(--card));border:1px solid var(--line);border-radius:18px;padding:22px;position:relative;overflow:hidden}
+  .miss:before{content:"";position:absolute;inset:0 0 auto 0;height:3px;background:linear-gradient(90deg,var(--pur),transparent)}
+  .miss .rank{font-size:12px;font-weight:700;color:var(--vio);background:rgba(167,139,250,.14);width:26px;height:26px;border-radius:8px;display:flex;align-items:center;justify-content:center;margin-bottom:14px}
+  .miss h3{margin:0 0 8px;font-size:17px;font-weight:700}
+  .miss p{margin:0;color:var(--mut);font-size:14px}
+  .miss .tag{display:inline-block;margin-top:14px;font-size:11.5px;font-weight:700;letter-spacing:.04em;padding:4px 10px;border-radius:999px}
+  .t-red{background:rgba(251,113,133,.14);color:var(--red)}
+  .t-amb{background:rgba(251,191,36,.14);color:var(--amb)}
+  .t-blu{background:rgba(96,165,250,.14);color:var(--blu)}
+
+  /* table */
+  .tblcard{background:var(--card);border:1px solid var(--line);border-radius:18px;overflow:hidden;margin-top:6px}
+  table{width:100%;border-collapse:collapse;font-size:13.5px}
+  thead th{text-align:left;padding:14px 16px;color:var(--dim);font-weight:600;font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;border-bottom:1px solid var(--line);background:var(--bg2)}
+  tbody td{padding:12px 16px;border-bottom:1px solid rgba(42,37,64,.6);color:var(--ink);vertical-align:top}
+  tbody tr:hover{background:rgba(139,92,246,.05)}
+  tbody tr:last-child td{border-bottom:none}
+  .rel{font-weight:600}
+  .date{color:var(--dim);white-space:nowrap}
+  .pill{font-size:11px;font-weight:700;padding:3px 9px;border-radius:999px;white-space:nowrap}
+  .v-h{background:rgba(196,181,253,.16);color:var(--hi)}
+  .v-m{background:rgba(118,114,143,.18);color:var(--mut)}
+  .foot{color:var(--mut);font-size:12.5px}
+  .verd{font-weight:600}
+  .verd.bad{color:var(--red)} .verd.warn{color:var(--amb)} .verd.ok{color:var(--grn)} .verd.dim{color:var(--dim);font-weight:500}
+
+  /* drafts */
+  .drafts{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
+  @media(max-width:820px){.drafts{grid-template-columns:1fr}}
+  .draft{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:20px;display:flex;flex-direction:column}
+  .draft h4{margin:0 0 4px;font-size:15px}
+  .draft .why{font-size:12px;color:var(--pur2);font-weight:600;margin-bottom:12px}
+  .draft .hook{font-size:14px;color:var(--ink);font-style:italic;border-left:2px solid var(--pur);padding-left:12px;margin:0 0 12px}
+  .draft ul{margin:0;padding-left:18px;color:var(--mut);font-size:13px}
+  .draft li{margin-bottom:4px}
+
+  .rec{background:linear-gradient(120deg,rgba(139,92,246,.14),rgba(96,165,250,.08));border:1px solid rgba(139,92,246,.35);border-radius:18px;padding:24px 26px;margin-top:8px}
+  .rec h3{margin:0 0 6px;font-size:20px}
+  .rec p{margin:0;color:var(--mut);font-size:15px}
+  .footer{margin-top:60px;padding-top:22px;border-top:1px solid var(--line);color:var(--dim);font-size:12.5px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <span class="kicker">● Product Marketing · Internal</span>
+  <h1>40 releases shipped.<br><span class="g">Marketing told ~4 stories.</span></h1>
+  <p class="lede">A look at Abacum's Feb–Jun 2026 releases against our actual online footprint, and the high-value launches that never left Slack.</p>
+  <p class="meta">Sources: Slack #release-updates · public newsroom/press · web search. LinkedIn inferred (auth-walled). · 2026-06-17</p>
+
+  <div class="contrast">
+    <div class="stat"><div class="n bad">~40</div><div class="l">Releases shipped in the window, captured in #release-updates</div></div>
+    <div class="vs">measured<br>against</div>
+    <div class="stat"><div class="n ok">~4</div><div class="l">Standalone external moments: Abacum Intelligence, NetSuite, Rillet &amp; Campfire blogs</div></div>
+  </div>
+
+  <h2>The three biggest misses</h2>
+  <div class="misses">
+    <div class="miss">
+      <div class="rank">1</div>
+      <h3>Quantified speed gains</h3>
+      <p>20–50% platform-wide, Input Tables 94–99% faster, named-customer proof (Newstore 49%, Exness 39%). The thing FP&amp;A buyers screenshot and forward.</p>
+      <span class="tag t-red">Zero external footprint</span>
+    </div>
+    <div class="miss">
+      <div class="rank">2</div>
+      <h3>Discrete agentic AI</h3>
+      <p>MCP, Ask AI for business users, AI Insights Block, AI Data Cleaning. Each a sharp demo, all folded into one April umbrella. MCP shipped in Feb as the topic peaked — we said nothing.</p>
+      <span class="tag t-amb">Buried in the umbrella</span>
+    </div>
+    <div class="miss">
+      <div class="rank">3</div>
+      <h3>Partner co-marketing</h3>
+      <p>TeamOhana (headcount), Maxio, Everest got no external push — while the partner would amplify for free. Rillet &amp; Campfire ran the playbook right.</p>
+      <span class="tag t-blu">Free reach, uncollected</span>
+    </div>
+  </div>
+
+  <h2>Release-by-release footprint</h2>
+  <div class="tblcard">
+    <table>
+      <thead><tr><th>Release</th><th>Date</th><th>Value</th><th>External footprint</th><th>Verdict</th></tr></thead>
+      <tbody>
+        <tr><td class="rel">Platform speed boost 20–50% (AWS)</td><td class="date">May 26</td><td><span class="pill v-h">High</span></td><td class="foot">Slack only</td><td class="verd bad">Undermarketed</td></tr>
+        <tr><td class="rel">Input Table / Version perf (94–99%)</td><td class="date">Mar 27</td><td><span class="pill v-h">High</span></td><td class="foot">Slack only</td><td class="verd bad">Undermarketed</td></tr>
+        <tr><td class="rel">Engine: Polars migration (~30%)</td><td class="date">Feb 13</td><td><span class="pill v-m">Med</span></td><td class="foot">Slack only</td><td class="verd bad">Undermarketed</td></tr>
+        <tr><td class="rel">Abacum MCP live in production</td><td class="date">Feb 12</td><td><span class="pill v-h">High</span></td><td class="foot">Umbrella (Apr)</td><td class="verd bad">Undermarketed at ship</td></tr>
+        <tr><td class="rel">Ask AI on Spaces &amp; Tables</td><td class="date">Apr 16</td><td><span class="pill v-h">High</span></td><td class="foot">Umbrella</td><td class="verd bad">Undermarketed</td></tr>
+        <tr><td class="rel">AI Insights Block (auto narrative)</td><td class="date">Apr 21</td><td><span class="pill v-h">High</span></td><td class="foot">Umbrella</td><td class="verd bad">Undermarketed</td></tr>
+        <tr><td class="rel">AI Data Cleaning (messy vendors)</td><td class="date">Apr 8</td><td><span class="pill v-h">High</span></td><td class="foot">Umbrella</td><td class="verd bad">Undermarketed</td></tr>
+        <tr><td class="rel">NetSuite SuiteApp / Built for NetSuite</td><td class="date">May 21</td><td><span class="pill v-h">High</span></td><td class="foot">PR (TipRanks)</td><td class="verd warn">Marketed once · needs drumbeat</td></tr>
+        <tr><td class="rel">Import API (closes Pigment gap)</td><td class="date">May 7</td><td><span class="pill v-m">Med</span></td><td class="foot">Slack only</td><td class="verd warn">Competitive / sales</td></tr>
+        <tr><td class="rel">Public API: model logic + dataset data</td><td class="date">Jun 9</td><td><span class="pill v-m">Med</span></td><td class="foot">Slack only</td><td class="verd warn">Technical angle</td></tr>
+        <tr><td class="rel">New integration: TeamOhana (headcount)</td><td class="date">Feb 27</td><td><span class="pill v-m">Med</span></td><td class="foot">Slack only</td><td class="verd bad">Undermarketed co-mktg</td></tr>
+        <tr><td class="rel">New integration: Maxio (billing)</td><td class="date">Dec 17</td><td><span class="pill v-m">Med</span></td><td class="foot">Slack only</td><td class="verd bad">Undermarketed co-mktg</td></tr>
+        <tr><td class="rel">SOC 2 Type II + Availability</td><td class="date">Feb 19</td><td><span class="pill v-m">Med</span></td><td class="foot">Security page</td><td class="verd warn">Easy trust post, not done</td></tr>
+        <tr><td class="rel">Rillet integration</td><td class="date">Mar 24</td><td><span class="pill v-m">Med</span></td><td class="foot">Blog + partner</td><td class="verd ok">Marketed (template)</td></tr>
+        <tr><td class="rel">Campfire integration</td><td class="date">Mar 2</td><td><span class="pill v-m">Med</span></td><td class="foot">Blog</td><td class="verd ok">Marketed</td></tr>
+        <tr><td class="rel">Scenario Studio (rebrand + goal seek)</td><td class="date">Feb 17–25</td><td><span class="pill v-h">High</span></td><td class="foot">Umbrella</td><td class="verd ok">Covered</td></tr>
+        <tr><td class="rel">Block Controls (self-serve for members)</td><td class="date">Mar 10</td><td><span class="pill v-m">Med</span></td><td class="foot">Slack only</td><td class="verd dim">Bundle candidate</td></tr>
+        <tr><td class="rel">Top N · Sparklines · Donut · Multi-KPI</td><td class="date">Mar–Jun</td><td><span class="pill v-m">Low-Med</span></td><td class="foot">Slack only</td><td class="verd dim">"Reporting glow-up" bundle</td></tr>
+        <tr><td class="rel">Dependency views · formula params · DSM</td><td class="date">Mar–Jun</td><td><span class="pill v-m">Low-Med</span></td><td class="foot">Slack only</td><td class="verd dim">Niche / enablement</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2>The fix</h2>
+  <div class="rec">
+    <h3>📣 A monthly “product drop” on LinkedIn</h3>
+    <p>One carousel or 30-sec demo a month, finance-outcome first. Low production cost, compounding reach. It monetizes the releases that don't justify a press moment but absolutely justify a post — and the same assets double as sales enablement. Start by resurfacing the three below.</p>
+  </div>
+
+  <h2>Three drafts to resurface now</h2>
+  <div class="drafts">
+    <div class="draft">
+      <h4>1 · Speed boost</h4>
+      <div class="why">Orphaned · quantified · lowest effort</div>
+      <p class="hook">“Your forecast shouldn't make you wait.”</p>
+      <ul>
+        <li>Model saves 35–40% faster</li>
+        <li>Recalcs 40–50% faster</li>
+        <li>Newstore 49%, Exness 39% in prod</li>
+        <li>Money shot: Input Table 70s → 300ms clip</li>
+      </ul>
+    </div>
+    <div class="draft">
+      <h4>2 · AI Insights Block</h4>
+      <div class="why">Orphaned · clicky · demo-able</div>
+      <p class="hook">“What if your monthly variance commentary wrote itself?”</p>
+      <ul>
+        <li>Auto narrative: variance, bridge, headlines</li>
+        <li>One click to regenerate each close</li>
+        <li>Respects every permission &amp; filter</li>
+        <li>Kills the worst part of close week</li>
+      </ul>
+    </div>
+    <div class="draft">
+      <h4>3 · Agentic AI (MCP + Ask AI)</h4>
+      <div class="why">Flagship AI-native · rode no wave in Feb</div>
+      <p class="hook">“Your CRO shouldn't wait in the finance queue to know why OPEX spiked.”</p>
+      <ul>
+        <li>Query governed data from Claude / ChatGPT</li>
+        <li>Ask AI now open to business users</li>
+        <li>Same role-based permissions enforced</li>
+        <li>30-sec demo: ask in Claude, answer from Abacum</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="footer">
+    Caveats: AnnounceKit is a passive in-app changelog mirroring Slack (not scraped). LinkedIn footprint inferred from public newsroom + press + search, not a post-by-post audit. Verify speed metrics and named-customer sign-off before publishing.
+  </div>
+
+</div>
+</body>
+</html>
