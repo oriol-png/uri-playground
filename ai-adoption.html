@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>AI Adoption Percentile — Self-Assessment</title>
+<style>
+  :root{
+    --bg:#0d1117; --panel:#161b22; --panel2:#1c2230; --line:#2a3140;
+    --txt:#e8edf4; --muted:#9aa6b8; --accent:#5b8cff; --accent2:#36d399;
+    --warn:#f0a93b; --bad:#f06b6b; --chip:#222b3a;
+    --r:14px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:linear-gradient(180deg,#0b0f15,#0d1117);color:var(--txt);
+    font:15px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;}
+  .wrap{max-width:860px;margin:0 auto;padding:32px 20px 80px;}
+  h1{font-size:26px;margin:0 0 6px;letter-spacing:-.3px}
+  h2{font-size:19px;margin:28px 0 12px}
+  h3{font-size:15px;margin:0 0 8px;color:var(--muted);text-transform:uppercase;letter-spacing:.6px;font-weight:600}
+  p{color:var(--txt)}
+  .sub{color:var(--muted);font-size:14px;margin:0 0 22px}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:20px;margin-bottom:16px}
+  .grid{display:grid;gap:12px}
+  .g2{grid-template-columns:1fr 1fr}
+  .g3{grid-template-columns:1fr 1fr 1fr}
+  @media(max-width:640px){.g2,.g3{grid-template-columns:1fr}}
+  .opt,.tile{background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:14px 16px;
+    cursor:pointer;transition:.12s;display:flex;gap:10px;align-items:flex-start}
+  .opt:hover,.tile:hover{border-color:var(--accent);background:#1f2738}
+  .opt.sel,.tile.sel{border-color:var(--accent);background:#23304d;box-shadow:0 0 0 1px var(--accent) inset}
+  .tile{flex-direction:column;text-align:left}
+  .tile b{font-size:15px}
+  .tile span{color:var(--muted);font-size:13px}
+  .dot{width:18px;height:18px;border-radius:50%;border:2px solid var(--muted);flex:0 0 auto;margin-top:1px}
+  .opt.sel .dot{border-color:var(--accent);background:var(--accent)}
+  button{font:inherit;cursor:pointer;border:none;border-radius:10px;padding:11px 20px;font-weight:600}
+  .btn{background:var(--accent);color:#fff}
+  .btn:disabled{opacity:.4;cursor:not-allowed}
+  .btn.ghost{background:transparent;color:var(--muted);border:1px solid var(--line)}
+  .row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+  .between{justify-content:space-between}
+  .chip{background:var(--chip);border:1px solid var(--line);border-radius:999px;padding:4px 11px;font-size:12.5px;color:var(--muted)}
+  .bar{height:8px;background:#0c1422;border-radius:999px;overflow:hidden;margin-top:6px}
+  .bar>i{display:block;height:100%;border-radius:999px;background:linear-gradient(90deg,var(--accent),var(--accent2))}
+  .prog{height:6px;background:#0c1422;border-radius:999px;overflow:hidden;margin:0 0 22px}
+  .prog>i{display:block;height:100%;background:var(--accent);transition:width .25s}
+  .hide{display:none}
+  .pct{font-size:30px;font-weight:700;letter-spacing:-.5px}
+  .popname{font-weight:600}
+  .popnote{color:var(--muted);font-size:12.5px}
+  .scorebig{font-size:54px;font-weight:800;letter-spacing:-1.5px;line-height:1}
+  .tier{display:inline-block;padding:5px 14px;border-radius:999px;font-weight:700;font-size:14px;margin-top:8px}
+  details{background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:0 16px;margin-bottom:10px}
+  details summary{cursor:pointer;padding:14px 0;font-weight:600;list-style:none}
+  details summary::-webkit-details-marker{display:none}
+  details[open]{padding-bottom:14px}
+  a{color:var(--accent)}
+  .note{font-size:12.5px;color:var(--muted);line-height:1.5}
+  .qtext{font-size:18px;font-weight:600;margin:0 0 14px}
+  .dim{font-size:12px;color:var(--accent);font-weight:600;letter-spacing:.5px;text-transform:uppercase}
+  table{width:100%;border-collapse:collapse;font-size:13px}
+  td,th{text-align:left;padding:7px 8px;border-bottom:1px solid var(--line)}
+  th{color:var(--muted);font-weight:600}
+  .legend{font-size:12px;color:var(--muted)}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- ============ INTRO ============ -->
+  <section id="intro">
+    <h1>How far ahead are you on AI?</h1>
+    <p class="sub">Answer a short set of questions about how you actually use AI. You'll get an estimated capability score and where it places you against four reference groups. Percentiles are <b>modeled estimates</b> calibrated to public adoption research, not a precise ranking.</p>
+
+    <div class="card">
+      <h3>1 · Your role</h3>
+      <p class="note" style="margin:-2px 0 14px">Sets the "people in your function" comparison and tailors a few examples.</p>
+      <div class="grid g3" id="profileGrid"></div>
+    </div>
+
+    <div class="card">
+      <h3>2 · Depth</h3>
+      <div class="grid g3" id="pathGrid"></div>
+    </div>
+
+    <div class="row between">
+      <span class="note" id="introHint">Pick a role and a depth to begin.</span>
+      <button class="btn" id="startBtn" disabled>Start →</button>
+    </div>
+    <p class="note" style="text-align:center;margin-top:14px;opacity:.8">Responses are logged anonymously to improve the test. No name, email, or IP is collected.</p>
+  </section>
+
+  <!-- ============ QUIZ ============ -->
+  <section id="quiz" class="hide">
+    <div class="prog"><i id="progFill" style="width:0%"></i></div>
+    <div class="row between" style="margin-bottom:10px">
+      <span class="chip" id="qCount"></span>
+      <span class="dim" id="qDim"></span>
+    </div>
+    <div class="card">
+      <p class="qtext" id="qText"></p>
+      <div class="grid" id="optGrid"></div>
+    </div>
+    <div class="row between">
+      <button class="btn ghost" id="backBtn">← Back</button>
+      <span class="note" id="qHint">Select an answer to continue</span>
+    </div>
+  </section>
+
+  <!-- ============ RESULTS ============ -->
+  <section id="results" class="hide">
+    <h1>Your AI capability profile</h1>
+    <p class="sub" id="resSub"></p>
+
+    <div class="card row between" style="align-items:center">
+      <div>
+        <div class="note">Capability score (0–100)</div>
+        <div class="scorebig" id="scoreNum"></div>
+        <div class="tier" id="tierTag"></div>
+      </div>
+      <svg id="radar" width="240" height="220" viewBox="0 0 240 220"></svg>
+    </div>
+
+    <h2>Where that places you</h2>
+    <p class="note" style="margin:-6px 0 14px">Same score, different crowds. The further right the group already skews toward AI, the lower your percentile in it — that's the point of comparing.</p>
+    <div class="card" id="popCards"></div>
+
+    <h2>Dimension breakdown</h2>
+    <div class="card" id="dimCards"></div>
+
+    <h2>Takeaways — what to learn next</h2>
+    <div class="card" id="takeaways"></div>
+
+    <h2>Methodology &amp; sources</h2>
+    <details>
+      <summary>How the score works</summary>
+      <p class="note">Each answer earns points on one of five dimensions — <b>Breadth</b>, <b>Frequency &amp; integration</b>, <b>Technical depth</b>, <b>Agentic &amp; automation</b>, and <b>Leverage &amp; influence</b>. Dimensions are weighted (depth and agentic count most, because they separate the frontier from regular users) into a single 0–100 score. Longer paths sample more dimensions and resolve the top end more precisely.</p>
+    </details>
+    <details>
+      <summary>How percentiles are estimated</summary>
+      <p class="note">There is no clean public dataset of "AI capability percentile," so each population is modeled as a logistic distribution of capability scores. The median of each distribution is anchored to published adoption research (below): the general population skews very low, knowledge workers higher, tech workers higher still, and your function sits where its measured adoption sits. Your score is placed on each curve. Percentiles are bounded to 0.1–99.9 and are directional estimates, not measurements.</p>
+    </details>
+    <details>
+      <summary>Sources used for calibration</summary>
+      <div class="note">
+        <ul style="margin:6px 0 0;padding-left:18px;line-height:1.7">
+          <li>Pew Research Center (2025) — 34% of US adults have used ChatGPT; ~52% of postgraduates.</li>
+          <li>Gallup Workforce (fall 2025) — ~12% of employed adults use AI daily, ~25% at least weekly; ~60% of tech workers use it frequently.</li>
+          <li>McKinsey, State of AI (2025) — 79% org-level gen-AI use; &lt;10% scaling agents.</li>
+          <li>Stack Overflow Developer Survey (2025) — ~51% of professional developers use AI tools daily.</li>
+          <li>Anthropic Economic Index (2025) — AI use concentrated in computer/math, analytical and writing-heavy occupations.</li>
+          <li>Menlo Ventures / McKinsey — AI spend concentrated in coding (~55%), then IT, marketing, CS, design.</li>
+        </ul>
+      </div>
+    </details>
+
+    <p class="note" style="margin-top:16px">Prototype — directional, not scientific. Built as a self-test you can also hand to colleagues across functions.</p>
+    <div class="row" style="margin-top:14px">
+      <button class="btn" id="retakeBtn">Retake</button>
+      <button class="btn ghost" id="changeBtn">Change role / depth</button>
+    </div>
+  </section>
+
+</div>
+
+<script>
+/* ---------------- DATA ---------------- */
+const DIMS = {
+  BREADTH:{label:"Breadth", w:0.15},
+  FREQ:{label:"Frequency & integration", w:0.20},
+  DEPTH:{label:"Technical depth", w:0.25},
+  AGENT:{label:"Agentic & automation", w:0.25},
+  LEVERAGE:{label:"Leverage & influence", w:0.15}
+};
+
+// Population logistic params. percentile = 100/(1+exp(-k*(score-m)))
+const POPS = [
+  {id:"general", name:"General population", note:"All adults — most rarely use AI", m:12, k:0.080},
+  {id:"knowledge", name:"Digital / knowledge workers", note:"People who work in software daily", m:26, k:0.080},
+  {id:"tech", name:"Tech-industry workers", note:"People working in tech companies", m:45, k:0.075},
+  {id:"role", name:"People in your function", note:"", m:38, k:0.080} // m overwritten by profile
+];
+
+// Profile median capability score (m for the "role" population) + tailored examples
+const PROFILES = [
+  {id:"product", name:"Product (PM/PD)", m:40, ex:"discovery synthesis, spec drafting, competitive analysis, data exploration"},
+  {id:"engineering", name:"Engineering", m:50, ex:"coding agents, code review, debugging, test generation, MCP tooling"},
+  {id:"data", name:"Data / Analytics", m:47, ex:"SQL generation, analysis, pipeline scripting, notebook copilots"},
+  {id:"design", name:"Design", m:38, ex:"image/asset generation, UX copy, mockup iteration, research synthesis"},
+  {id:"marketing", name:"Marketing", m:37, ex:"content drafting, campaign ideation, SEO, image/video generation"},
+  {id:"finance", name:"Finance / FP&A", m:33, ex:"modeling, variance commentary, reconciliations, reporting narratives"},
+  {id:"sales", name:"Sales", m:31, ex:"outreach drafting, call summaries, proposal generation, CRM hygiene"},
+  {id:"ops", name:"Operations", m:30, ex:"process automation, doc generation, vendor analysis, workflow building"},
+  {id:"support", name:"Support / CS", m:32, ex:"reply drafting, macro generation, ticket triage, knowledge-base search"},
+  {id:"management", name:"Management / Leadership", m:35, ex:"briefings, decision memos, team enablement, setting AI direction"},
+  {id:"admin", name:"Administrative", m:24, ex:"scheduling, email drafting, note-taking, document formatting"},
+  {id:"other", name:"Other", m:30, ex:"general knowledge work"}
+];
+
+const PATHS = [
+  {id:"quick", name:"Quick test", note:"~8 questions · 3 min", maxLvl:1},
+  {id:"assessment", name:"Assessment", note:"~16 questions · 6 min", maxLvl:2},
+  {id:"deep", name:"Deep dive", note:"~28 questions · 12 min", maxLvl:3}
+];
+
+// Question bank. lvl: 1=in all paths, 2=assessment+deep, 3=deep only
+// w = question weight within its dimension. Core daily-capability items weigh more;
+// rare / aspirational / org-influence items weigh less (fair for a self-assessment).
+const Q = [
+  {d:"FREQ",lvl:1,w:1.2,t:"How often do you use AI tools on a typical workday?",o:[["Rarely or never",0],["A few times a week",.3],["Most days",.55],["Many times every day",.8],["Constantly — it's always open",1]]},
+  {d:"BREADTH",lvl:1,w:1.1,t:"How many distinct kinds of tasks do you use AI for?",o:[["Just one",.1],["2–3",.3],["4–6",.55],["7–10",.8],["More than 10",1]]},
+  {d:"DEPTH",lvl:1,w:1.2,t:"Which best describes how you prompt?",o:[["Short one-line questions",.15],["Detailed instructions",.4],["Structured prompts with context, role and examples",.7],["I design reusable prompt systems and manage context deliberately",1]]},
+  {d:"AGENT",lvl:1,w:1.1,t:"Your use of AI agents / automation?",o:[["Nothing beyond chat",.1],["Chat only, but aware of agents",.25],["I use agentic features (tool use, browsing, code/file analysis)",.55],["I build or run agents/automations for myself",.8],["I build multi-step agentic systems with custom tools / MCP",1]]},
+  {d:"DEPTH",lvl:1,w:1.0,t:"Do you pick different models for different tasks?",o:[["Didn't know models differ",.1],["I use whatever's default",.3],["Sometimes switch",.6],["I deliberately match model to task (reasoning vs fast vs cheap)",1]]},
+  {d:"LEVERAGE",lvl:1,w:0.7,t:"Have you built AI things others use?",o:[["No",.1],["Shared good prompts informally",.35],["Built a tool/GPT/automation a few people use",.7],["Built AI things used across my team or company",1]]},
+  {d:"FREQ",lvl:1,w:1.1,t:"How embedded is AI in your workflow?",o:[["Occasional novelty",.15],["Helps now and then",.4],["Part of many daily tasks",.7],["I'm AI-first for most knowledge work",1]]},
+  {d:"BREADTH",lvl:1,w:1.0,t:"Beyond a single chatbot, what do you use?",o:[["Just one chatbot",.15],["2–3 AI tools",.4],["Several specialized AI tools",.7],["AI built into my IDE, docs, browser, CLI, etc.",1]]},
+
+  {d:"AGENT",lvl:2,w:0.8,t:"Connecting AI to your own tools and data (e.g. MCP, connectors)?",o:[["Don't know what that means",.1],["Aware but haven't done it",.35],["Connected a couple of tools / data sources",.7],["I regularly connect AI to my systems and data",1]]},
+  {d:"DEPTH",lvl:2,w:1.0,t:"Do you manage the context the model sees?",o:[["No",.15],["I paste in relevant info",.4],["I keep reusable context docs / system prompts",.7],["I engineer context (RAG, memory, pipelines)",1]]},
+  {d:"LEVERAGE",lvl:2,w:0.6,t:"Do you enable others on AI?",o:[["No",.1],["Answer questions ad hoc",.35],["Run sessions or write guides",.7],["I drive AI adoption strategy where I work",1]]},
+  {d:"BREADTH",lvl:2,w:0.8,t:"Multimodal / creative AI (image, audio, video, voice)?",o:[["None",.15],["Tried once or twice",.35],["Use it regularly",.7],["Integrated into real work",1]]},
+  {d:"FREQ",lvl:2,w:1.1,t:"Do you reach for AI before traditional tools (search, docs, a colleague)?",o:[["Rarely",.15],["Sometimes",.4],["Usually",.7],["Almost always my first move",1]]},
+  {d:"DEPTH",lvl:2,w:1.0,t:"How do you handle AI mistakes / hallucinations?",o:[["I don't really notice them",.1],["I take outputs mostly at face value",.3],["I spot-check important things",.6],["I verify systematically and know each tool's failure modes",1]]},
+  {d:"AGENT",lvl:2,w:0.9,t:"Using AI to write code or build tools (even if you're not an engineer)?",o:[["Never",.1],["Occasionally generate small snippets/scripts",.4],["I build working tools or apps with AI",.75],["I ship production-grade things with AI assistance",1]]},
+  {d:"LEVERAGE",lvl:2,w:0.8,t:"Have you changed a real work process using AI?",o:[["No",.1],["Minor tweaks",.35],["Re-built a meaningful workflow",.7],["Restructured how my team works",1]]},
+
+  {d:"DEPTH",lvl:3,w:0.6,t:"Do you compare / evaluate model outputs systematically?",o:[["No",.15],["Eyeball which looks better",.4],["Run the same task across models to compare",.7],["I build evals / test sets to measure quality",1]]},
+  {d:"AGENT",lvl:3,w:0.8,t:"Do you use AI in the terminal or coding agents (Claude Code, Cursor, Copilot agents)?",o:[["No / not applicable",.1],["Tried them",.4],["Use them regularly",.75],["They're core to how I work",1]]},
+  {d:"AGENT",lvl:3,w:0.6,t:"Built or configured custom tools, function-calling, or MCP servers?",o:[["No",.1],["Configured existing ones",.45],["Built a few custom tools",.75],["I build and maintain custom tooling / MCP",1]]},
+  {d:"DEPTH",lvl:3,w:0.9,t:"Prompt techniques (few-shot, chain-of-thought, decomposition, ReAct)?",o:[["Don't know these",.1],["Use some without naming them",.4],["Deliberately use several",.7],["I design workflows around them",1]]},
+  {d:"BREADTH",lvl:3,w:0.9,t:"How many AI providers/models have you used meaningfully?",o:[["1",.2],["2",.45],["3–4",.75],["5+",1]]},
+  {d:"FREQ",lvl:3,w:1.0,t:"Roughly how many AI interactions per day?",o:[["Less than 1",.1],["1–5",.35],["6–20",.6],["21–50",.85],["50+",1]]},
+  {d:"LEVERAGE",lvl:3,w:0.9,t:"How quickly do you adopt new models/features after release?",o:[["I don't track releases",.1],["Eventually try the big ones",.4],["Within a few weeks",.7],["Within days — I follow the frontier",1]]},
+  {d:"LEVERAGE",lvl:3,w:0.7,t:"AI spend / advocacy?",o:[["Only free tools",.2],["Pay for one premium tool",.45],["Pay for several / expense them",.75],["I drive AI tooling budget decisions",1]]},
+  {d:"DEPTH",lvl:3,w:0.8,t:"Do you manage memory / personalization / system config across AI tools?",o:[["No",.15],["Use defaults",.35],["Set custom instructions / memory",.7],["I maintain system-level config across tools",1]]},
+  {d:"AGENT",lvl:3,w:0.7,t:"Do you chain multiple AI tools/automations together?",o:[["No",.1],["Manually copy between tools",.35],["Built simple automations (Zapier/n8n + LLM)",.7],["I run multi-step automated pipelines",1]]},
+  {d:"LEVERAGE",lvl:3,w:0.5,t:"Have you influenced product or strategy with AI?",o:[["No",.1],["Contributed ideas",.4],["Shipped AI features or workflows",.75],["I set AI direction in my domain",1]]},
+  {d:"DEPTH",lvl:3,w:0.8,t:"Can you discuss AI architecture (RAG, agents, context windows, tool use)?",o:[["Not really",.1],["Basic familiarity",.4],["Comfortable explaining trade-offs",.7],["I design around these concepts",1]]}
+];
+
+// Learn-next tips per dimension, by current band (low <45, else mid)
+const TIPS = {
+  BREADTH:{low:"Break out of your one go-to chatbot. Add a coding-capable model, an image/diagram generator, and a voice/meeting tool this month — breadth compounds fast.",
+           mid:"Push into multimodal (voice notes → structured docs, image/diagram generation) and run the same task across a second provider to learn each model's strengths."},
+  FREQ:{low:"Make AI your default first move for drafting, summarizing and looking things up — before search or pinging a colleague. Frequency is the quickest lever.",
+        mid:"Route more recurring work to AI (inbox triage, meeting prep, status reports) so it becomes genuinely always-on rather than task-by-task."},
+  DEPTH:{low:"Upgrade prompting: give role + context + 1–2 examples on anything non-trivial, save your best prompts to reuse, and learn to spot and verify hallucinations.",
+         mid:"Move from prompting to context engineering: reusable system prompts/context docs, deliberate model choice per task, and naming the patterns (few-shot, chain-of-thought)."},
+  AGENT:{low:"Use the agentic features you already have — let AI browse, run code, or read your files — then automate one repetitive task end to end.",
+         mid:"Connect AI to your real tools and data (MCP / connectors), chain steps together, and try a coding agent (Claude Code, Cursor) even for small scripts. Biggest frontier lever."},
+  LEVERAGE:{low:"Start sharing: post your best prompts and workflows to your team. Influence grows from showing what works, not announcing it.",
+            mid:"Package what works into something reusable (a shared assistant, template, or automation) and help set AI norms for your function."}
+};
+const FRONTIER = {
+  Curious:"Biggest unlock: get to daily, structured use. Frequency and prompting depth come before everything else.",
+  "Regular user":"Biggest unlock: get to daily, structured use. Frequency and prompting depth come before everything else.",
+  "Advanced user":"You're past the basics. Your next jump is agentic use and connecting AI to your own data.",
+  "Power user":"You're in rare company. Edge gains now come from building (custom tools/MCP, evals) and multiplying others.",
+  "Frontier / Builder":"You're at the frontier. Highest leverage now is scaling others and shaping how your org works — not your own tooling."
+};
+
+const TIERS = [
+  {min:0,  name:"Curious",       col:"#6b7686", desc:"Early days. AI is occasional and shallow."},
+  {min:25, name:"Regular user",  col:"#5b8cff", desc:"AI is a normal part of some tasks."},
+  {min:45, name:"Advanced user", col:"#36b3ff", desc:"AI is integrated and you prompt with intent."},
+  {min:65, name:"Power user",    col:"#36d399", desc:"AI is core to how you work, across many tools."},
+  {min:82, name:"Frontier / Builder", col:"#f0a93b", desc:"You build with AI and live near the frontier — a small fraction of any group."}
+];
+
+/* ---------------- STATE ---------------- */
+let profile=null, path=null, questions=[], idx=0, answers=[];
+
+/* ---------------- SILENT ANONYMOUS LOGGING ----------------
+   Paste your Google Apps Script web-app URL below to enable logging.
+   Leave it as "" to disable (no requests are sent). No IP, no name, no email. */
+const LOG_ENDPOINT = "https://script.google.com/macros/s/AKfycbxqcpERGkR8YepnM3kHShrDau73g0iOh-4hPuRBQakpO5LoILtQZWEoh2jgFceY_uY/exec";
+const SESSION_ID = Math.random().toString(36).slice(2)+Date.now().toString(36);
+function visitorId(){
+  try{let v=localStorage.getItem("aiq_vid");
+    if(!v){v="v_"+Math.random().toString(36).slice(2)+Date.now().toString(36);localStorage.setItem("aiq_vid",v);}
+    return v;}catch(e){return "v_nostorage";}
+}
+function logResult(r,pcts){
+  if(!LOG_ENDPOINT)return;
+  let attempt=1;
+  try{attempt=parseInt(localStorage.getItem("aiq_attempts")||"0",10)+1;localStorage.setItem("aiq_attempts",String(attempt));}catch(e){}
+  const payload={
+    ts:new Date().toISOString(),
+    visitorId:visitorId(), sessionId:SESSION_ID, attempt,
+    profile:profile.id, profileName:profile.name, path:path.id,
+    overall:r.overall, tier:tierFor(r.overall).name,
+    dims:r.dimScore, pcts,
+    answers:answers.slice(),
+    ua:navigator.userAgent
+  };
+  try{
+    fetch(LOG_ENDPOINT,{method:"POST",mode:"no-cors",keepalive:true,
+      headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify(payload)});
+  }catch(e){/* logging must never break the UX */}
+}
+
+/* ---------------- INTRO RENDER ---------------- */
+const pg=document.getElementById("profileGrid");
+PROFILES.forEach(p=>{
+  const el=document.createElement("div");el.className="tile";
+  el.innerHTML=`<b>${p.name}</b>`;
+  el.onclick=()=>{profile=p;[...pg.children].forEach(c=>c.classList.remove("sel"));el.classList.add("sel");checkReady();};
+  pg.appendChild(el);
+});
+const pathG=document.getElementById("pathGrid");
+PATHS.forEach(p=>{
+  const el=document.createElement("div");el.className="tile";
+  el.innerHTML=`<b>${p.name}</b><span>${p.note}</span>`;
+  el.onclick=()=>{path=p;[...pathG.children].forEach(c=>c.classList.remove("sel"));el.classList.add("sel");checkReady();};
+  pathG.appendChild(el);
+});
+function checkReady(){
+  const ok=profile&&path;
+  document.getElementById("startBtn").disabled=!ok;
+  document.getElementById("introHint").textContent = ok
+    ? `${profile.name} · ${path.name} — examples for you: ${profile.ex}`
+    : "Pick a role and a depth to begin.";
+}
+document.getElementById("startBtn").onclick=startQuiz;
+
+/* ---------------- QUIZ ---------------- */
+function startQuiz(){
+  questions=Q.filter(q=>q.lvl<=path.maxLvl);
+  idx=0;answers=new Array(questions.length).fill(null);
+  show("quiz");renderQ();
+}
+function renderQ(){
+  const q=questions[idx];
+  document.getElementById("progFill").style.width=((idx)/questions.length*100)+"%";
+  document.getElementById("qCount").textContent=`Question ${idx+1} of ${questions.length}`;
+  document.getElementById("qDim").textContent=DIMS[q.d].label;
+  document.getElementById("qText").textContent=q.t;
+  const og=document.getElementById("optGrid");og.innerHTML="";
+  q.o.forEach((opt,i)=>{
+    const el=document.createElement("div");el.className="opt"+(answers[idx]===i?" sel":"");
+    el.innerHTML=`<span class="dot"></span><span>${opt[0]}</span>`;
+    el.onclick=()=>{answers[idx]=i;next();};
+    og.appendChild(el);
+  });
+  document.getElementById("backBtn").style.visibility = idx===0?"hidden":"visible";
+}
+function next(){
+  if(idx<questions.length-1){idx++;renderQ();}
+  else finish();
+}
+document.getElementById("backBtn").onclick=()=>{if(idx>0){idx--;renderQ();}};
+
+/* ---------------- SCORING ---------------- */
+function logistic(score,m,k){
+  let p=100/(1+Math.exp(-k*(score-m)));
+  return Math.min(99.9,Math.max(0.1,p));
+}
+function computeResult(){
+  // dimension raw averages
+  const sums={},cnts={};
+  Object.keys(DIMS).forEach(d=>{sums[d]=0;cnts[d]=0;});
+  questions.forEach((q,i)=>{
+    const v=q.o[answers[i]][1];const w=q.w||1;
+    sums[q.d]+=v*w;cnts[q.d]+=w;   // cnts holds total weight per dimension
+  });
+  const dimScore={};
+  Object.keys(DIMS).forEach(d=>{dimScore[d]=cnts[d]?(sums[d]/cnts[d]*100):null;});
+  // weighted overall over present dims
+  let wsum=0,acc=0;
+  Object.keys(DIMS).forEach(d=>{
+    if(dimScore[d]!==null){acc+=dimScore[d]*DIMS[d].w;wsum+=DIMS[d].w;}
+  });
+  const overall=Math.round(acc/wsum);
+  return {overall,dimScore};
+}
+function tierFor(s){let t=TIERS[0];TIERS.forEach(x=>{if(s>=x.min)t=x;});return t;}
+
+function finish(){
+  document.getElementById("progFill").style.width="100%";
+  const r=computeResult();
+  const pcts={};
+  POPS.forEach(p=>{const m=(p.id==="role"?profile.m:p.m);pcts[p.id]=+logistic(r.overall,m,p.k).toFixed(1);});
+  logResult(r,pcts);
+  renderResults(r);
+  show("results");
+}
+
+/* ---------------- RESULTS RENDER ---------------- */
+function renderResults(r){
+  document.getElementById("resSub").textContent=`${profile.name} · ${path.name}`;
+  document.getElementById("scoreNum").textContent=r.overall;
+  const t=tierFor(r.overall);
+  const tag=document.getElementById("tierTag");
+  tag.textContent=t.name;tag.style.background=t.col+"22";tag.style.color=t.col;
+  tag.title=t.desc;
+
+  // populations
+  const pops=POPS.map(p=>({...p, m:(p.id==="role"?profile.m:p.m)}));
+  const pc=document.getElementById("popCards");pc.innerHTML="";
+  pops.forEach(p=>{
+    const pct=logistic(r.overall,p.m,p.k);
+    const top=100-pct;
+    const topTxt = top<1 ? `Top ${top.toFixed(1)}%` : `Top ${Math.round(top)}%`;
+    const note = p.id==="role" ? `vs. ${profile.name}` : p.note;
+    const el=document.createElement("div");el.style.margin="6px 0 16px";
+    el.innerHTML=`
+      <div class="row between">
+        <div><span class="popname">${p.name}</span> <span class="popnote">· ${note}</span></div>
+        <div style="text-align:right"><span class="pct" style="font-size:20px">${pct.toFixed(pct>99||pct<1?1:0)}<span style="font-size:13px;color:var(--muted)">th pct</span></span></div>
+      </div>
+      <div class="bar"><i style="width:${pct}%"></i></div>
+      <div class="popnote" style="margin-top:4px">${topTxt} of this group</div>`;
+    pc.appendChild(el);
+  });
+
+  // dimensions
+  const dc=document.getElementById("dimCards");dc.innerHTML="";
+  Object.keys(DIMS).forEach(d=>{
+    if(r.dimScore[d]===null)return;
+    const v=Math.round(r.dimScore[d]);
+    const el=document.createElement("div");el.style.margin="6px 0 14px";
+    el.innerHTML=`<div class="row between"><span>${DIMS[d].label}</span><span class="popnote">${v}/100</span></div>
+      <div class="bar"><i style="width:${v}%"></i></div>`;
+    dc.appendChild(el);
+  });
+
+  drawRadar(r.dimScore);
+  renderTakeaways(r);
+}
+
+function renderTakeaways(r){
+  const present=Object.keys(DIMS).filter(d=>r.dimScore[d]!==null);
+  const sorted=[...present].sort((a,b)=>r.dimScore[a]-r.dimScore[b]);
+  const gaps=sorted.slice(0,2);                       // lowest 2 = gaps
+  const strengths=[...sorted].reverse().slice(0,2);   // highest 2 = edge
+  const t=tierFor(r.overall);
+  const el=document.getElementById("takeaways");
+  let h=`<h3 style="color:var(--accent2)">Your edge</h3><p style="margin:0 0 16px">`;
+  h+=strengths.map(d=>`<b>${DIMS[d].label}</b> (${Math.round(r.dimScore[d])})`).join(" · ");
+  h+=`</p><h3 style="color:var(--warn)">Close these gaps first</h3>`;
+  gaps.forEach(d=>{
+    const band=r.dimScore[d]<45?"low":"mid";
+    h+=`<div style="margin:0 0 12px"><b>${DIMS[d].label}</b> <span class="popnote">(${Math.round(r.dimScore[d])}/100)</span><div class="note" style="margin-top:3px;color:var(--txt)">${TIPS[d][band]}</div></div>`;
+  });
+  h+=`<div style="margin-top:14px;padding-top:14px;border-top:1px solid var(--line)"><span class="dim">Frontier move</span><div class="note" style="margin-top:4px;color:var(--txt)">${FRONTIER[t.name]}</div></div>`;
+  el.innerHTML=h;
+}
+
+function drawRadar(ds){
+  const keys=Object.keys(DIMS).filter(d=>ds[d]!==null);
+  const cx=120,cy=110,R=78,n=keys.length;
+  const svg=document.getElementById("radar");
+  let g="";
+  // rings
+  [0.25,0.5,0.75,1].forEach(f=>{
+    let pts=keys.map((d,i)=>{const a=-Math.PI/2+i*2*Math.PI/n;return[cx+Math.cos(a)*R*f,cy+Math.sin(a)*R*f];});
+    g+=`<polygon points="${pts.map(p=>p.join(",")).join(" ")}" fill="none" stroke="#2a3140" stroke-width="1"/>`;
+  });
+  // axes + labels
+  keys.forEach((d,i)=>{
+    const a=-Math.PI/2+i*2*Math.PI/n;
+    const x=cx+Math.cos(a)*R,y=cy+Math.sin(a)*R;
+    g+=`<line x1="${cx}" y1="${cy}" x2="${x}" y2="${y}" stroke="#2a3140" stroke-width="1"/>`;
+    const lx=cx+Math.cos(a)*(R+14),ly=cy+Math.sin(a)*(R+14);
+    const short=DIMS[d].label.split(" ")[0];
+    g+=`<text x="${lx}" y="${ly}" fill="#9aa6b8" font-size="9" text-anchor="middle" dominant-baseline="middle">${short}</text>`;
+  });
+  // data polygon
+  let pts=keys.map((d,i)=>{const a=-Math.PI/2+i*2*Math.PI/n;const f=ds[d]/100;return[cx+Math.cos(a)*R*f,cy+Math.sin(a)*R*f];});
+  g+=`<polygon points="${pts.map(p=>p.join(",")).join(" ")}" fill="rgba(91,140,255,.25)" stroke="#5b8cff" stroke-width="2"/>`;
+  pts.forEach(p=>g+=`<circle cx="${p[0]}" cy="${p[1]}" r="2.5" fill="#5b8cff"/>`);
+  svg.innerHTML=g;
+}
+
+/* ---------------- NAV ---------------- */
+function show(id){["intro","quiz","results"].forEach(s=>document.getElementById(s).classList.toggle("hide",s!==id));window.scrollTo(0,0);}
+document.getElementById("retakeBtn").onclick=startQuiz;
+document.getElementById("changeBtn").onclick=()=>show("intro");
+</script>
+</body>
+</html>
