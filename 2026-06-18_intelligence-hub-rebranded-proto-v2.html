@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Abacum Intelligence Hub — rebranded prototype v2</title>
+<style>
+  :root{
+    --ink:#1f1f1d; --ink2:#6b6a66; --ink3:#9b9a95;
+    --line:#ececea; --line2:#e0dfdc; --bg:#ffffff; --panel:#faf9f8;
+    --purple:#7F77DD; --purple-d:#534AB7; --purple-dd:#26215C; --purple-bg:#EEEDFE; --purple-br:#CECBF6;
+    --green:#1D9E75; --green-bg:#E1F5EE; --green-d:#0F6E56;
+    --amber:#D85A30; --amber-bg:#FAECE7; --amber-d:#993C1D;
+    --blue:#378ADD; --blue-bg:#E6F1FB; --blue-d:#185FA5;
+    --radius:14px;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;height:100%}
+  body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif;color:var(--ink);
+    background:var(--bg);display:flex;font-size:14px;-webkit-font-smoothing:antialiased}
+  input{accent-color:var(--purple)}
+  button{font:inherit;cursor:pointer}
+
+  /* SIDEBAR */
+  .side{width:236px;flex:0 0 236px;border-right:1px solid var(--line);padding:18px 14px;height:100vh;
+    position:sticky;top:0;background:var(--bg);overflow-y:auto}
+  .brand{font-size:16px;font-weight:600;letter-spacing:-.2px;padding:6px 8px 18px}
+  .brand .sl{color:var(--purple-d)}
+  .brand sup{font-size:8px}
+  .navlbl{font-size:10.5px;font-weight:700;letter-spacing:.07em;color:var(--ink3);text-transform:uppercase;margin:16px 10px 6px}
+  .nav{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:9px;cursor:pointer;color:var(--ink);
+    font-weight:500;border:1px solid transparent;user-select:none}
+  .nav:hover{background:var(--panel)}
+  .nav.active{background:var(--purple-bg);border-color:var(--purple-br);color:var(--purple-dd);font-weight:600}
+  .nav .ic{width:18px;height:18px;flex:0 0 18px;opacity:.8}
+  .nav.active .ic{opacity:1}
+
+  /* MAIN */
+  .main{flex:1;min-width:0;height:100vh;overflow-y:auto;position:relative}
+  .glow{position:absolute;top:-120px;right:-80px;width:520px;height:360px;border-radius:50%;
+    background:radial-gradient(closest-side,rgba(127,119,221,.16),rgba(127,119,221,0));pointer-events:none;z-index:0}
+  .wrap{max-width:780px;margin:0 auto;padding:46px 32px 80px;position:relative;z-index:1}
+
+  h1.hi{text-align:center;font-size:30px;font-weight:600;letter-spacing:-.5px;margin:26px 0 22px}
+  .ask{background:#fff;border:1px solid var(--line2);border-radius:18px;box-shadow:0 6px 24px rgba(40,40,60,.06);
+    padding:14px 16px 12px;margin-bottom:16px}
+  .askinput{width:100%;border:0;outline:0;font:inherit;font-size:15px;color:var(--ink);background:transparent;padding:6px 2px 16px;display:block}
+  .askinput::placeholder{color:var(--ink3)}
+  .ask .row{display:flex;align-items:center;gap:10px}
+  .pill{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line2);border-radius:20px;
+    padding:5px 11px;font-size:12.5px;color:var(--ink2);background:#fff;cursor:pointer}
+  .pill:hover{border-color:var(--purple-br)}
+  .pill.plus{width:30px;height:30px;justify-content:center;padding:0;font-size:18px;color:var(--ink2);line-height:1}
+  .pill.agentpill .ic-ag{font-size:13px}
+  .pill.agentpill.active{background:var(--purple-bg);border-color:var(--purple-br);color:var(--purple-dd);font-weight:600}
+  .send{margin-left:auto;width:30px;height:30px;border-radius:50%;background:var(--panel);border:1px solid var(--line2);
+    display:flex;align-items:center;justify-content:center;color:var(--ink3);font-size:15px}
+  .send:hover{background:var(--purple-bg);border-color:var(--purple-br);color:var(--purple-d)}
+  .chips{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-bottom:34px}
+  .chip{border:1px solid var(--line2);border-radius:20px;padding:7px 14px;font-size:12.5px;color:var(--ink);background:#fff;cursor:pointer}
+  .chip:hover{border-color:var(--purple-br);background:var(--purple-bg)}
+
+  .cards2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:34px}
+  .card{border:1px solid var(--line);border-radius:var(--radius);padding:16px 18px;background:#fff}
+  .card .ch{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+  .card .ch b{font-size:14px}
+  .viewall{color:var(--purple-d);font-size:12.5px;cursor:pointer;font-weight:500}
+  .empty{color:var(--ink3);font-size:13px;text-align:center;padding:16px 0 6px}
+
+  .arow{display:flex;align-items:center;gap:11px;padding:11px 4px;border-top:1px solid var(--line)}
+  .arow:first-of-type{border-top:0}
+  .ava{width:30px;height:30px;border-radius:8px;background:var(--purple-bg);display:flex;align-items:center;justify-content:center;
+    color:var(--purple-d);flex:0 0 30px}
+  .arow .tx{min-width:0}
+  .arow .tx .t{font-size:13px;line-height:1.35;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .arow .tx .s{font-size:11.5px;color:var(--ink3);margin-top:1px}
+  .arow .meta{margin-left:auto;display:flex;align-items:center;gap:8px;flex:0 0 auto}
+  .who{width:24px;height:24px;border-radius:50%;background:#efeefb;color:var(--purple-d);font-size:10px;font-weight:700;
+    display:flex;align-items:center;justify-content:center}
+  .who.ai{background:#f1f0ee;color:var(--ink2)}
+  .time{font-size:11.5px;color:var(--ink3);white-space:nowrap}
+
+  .secbar{display:flex;align-items:center;justify-content:space-between;margin:8px 0 18px}
+  .seg{display:inline-flex;border:1px solid var(--line2);border-radius:20px;overflow:hidden;font-size:12.5px}
+  .seg span{padding:6px 13px;color:var(--ink2);cursor:pointer}
+  .seg span.on{background:var(--ink);color:#fff}
+  .feedlbl{font-size:11px;font-weight:700;letter-spacing:.06em;color:var(--ink3);text-transform:uppercase;margin:18px 0 4px}
+
+  /* SECTION VIEWS */
+  .view{display:none}
+  .view.on{display:block}
+  .vh{display:flex;align-items:flex-start;gap:12px;margin-bottom:6px}
+  .vh h2{font-size:22px;font-weight:600;letter-spacing:-.3px;margin:0}
+  .renamed{font-size:10.5px;font-weight:600;color:var(--amber-d);background:var(--amber-bg);border:1px solid #F0997B;
+    padding:2px 8px;border-radius:20px;margin-top:6px;white-space:nowrap}
+  .vsub{color:var(--ink2);font-size:13.5px;margin:2px 0 22px;max-width:640px;line-height:1.5}
+
+  .lrow{display:flex;align-items:center;gap:14px;border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin-bottom:10px;background:#fff}
+  .lrow.click{cursor:pointer;transition:border-color .12s,box-shadow .12s}
+  .lrow.click:hover{border-color:var(--purple-br);box-shadow:0 4px 16px rgba(83,74,183,.08)}
+  .lrow .ic2{width:36px;height:36px;border-radius:9px;background:var(--purple-bg);color:var(--purple-d);
+    display:flex;align-items:center;justify-content:center;flex:0 0 36px}
+  .lrow .body{min-width:0;flex:1}
+  .lrow .body .nm{font-size:14px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .lrow .body .ds{font-size:12.5px;color:var(--ink2);margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .badges{display:flex;gap:7px;align-items:center;flex:0 0 auto;flex-wrap:wrap;justify-content:flex-end}
+  .bdg{font-size:11px;font-weight:600;padding:3px 9px;border-radius:20px;white-space:nowrap}
+  .b-agent{background:var(--purple-bg);color:var(--purple-dd)}
+  .b-tmpl{background:#f1f0ee;color:var(--ink2)}
+  .b-read{background:var(--green-bg);color:var(--green-d)}
+  .b-write{background:var(--amber-bg);color:var(--amber-d)}
+  .b-dest{background:#FBEAF0;color:#993556}
+  .b-live{background:var(--green-bg);color:var(--green-d)}
+  .b-trig{background:var(--blue-bg);color:var(--blue-d)}
+  .dot{width:7px;height:7px;border-radius:50%;background:var(--green);display:inline-block;margin-right:5px}
+  .b-on{background:var(--green-bg);color:var(--green-d)}
+  .b-off{background:#f1f0ee;color:var(--ink3)}
+
+  .note{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:13px 16px;font-size:12.5px;
+    color:var(--ink2);margin:6px 0 20px;line-height:1.5}
+  .note b{color:var(--ink)}
+  .hint{font-size:12px;color:var(--ink3);margin:-6px 0 14px}
+  .tabs{display:inline-flex;gap:4px;margin-bottom:16px}
+  .tab{font-size:12.5px;padding:6px 13px;border-radius:20px;border:1px solid var(--line2);color:var(--ink2);cursor:pointer;background:#fff}
+  .tab.on{background:var(--purple-bg);border-color:var(--purple-br);color:var(--purple-dd);font-weight:600}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .gctx{border:1px solid var(--line);border-radius:12px;padding:14px 16px;background:#fff}
+  .gctx .gt{font-size:13.5px;font-weight:600;color:var(--purple-dd)}
+  .gctx .gd{font-size:12px;color:var(--ink2);margin:3px 0 9px}
+
+  /* AGENT PICKER POPOVER */
+  .agentmenu{position:fixed;z-index:60;width:308px;max-height:62vh;overflow-y:auto;background:#fff;border:1px solid var(--line2);
+    border-radius:13px;box-shadow:0 18px 44px rgba(20,20,40,.20);padding:8px;display:none}
+  .agentmenu.on{display:block}
+  .amlbl{font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--ink3);padding:9px 8px 4px}
+  .amrow{display:flex;align-items:center;gap:10px;padding:8px;border-radius:9px;cursor:pointer}
+  .amrow:hover{background:var(--panel)}
+  .amrow.sel{background:var(--purple-bg)}
+  .amrow .amic{width:30px;height:30px;border-radius:8px;background:var(--purple-bg);color:var(--purple-d);
+    display:flex;align-items:center;justify-content:center;flex:0 0 30px}
+  .amrow .amtx{min-width:0}
+  .amrow .amtx .amn{font-size:13px;font-weight:600}
+  .amrow .amtx .ams{font-size:11px;color:var(--ink3)}
+  .amrow .amck{margin-left:auto;color:var(--purple-d);font-weight:700;opacity:0;flex:0 0 auto}
+  .amrow.sel .amck{opacity:1}
+
+  /* CHAT VIEW */
+  #chat.on{display:flex;flex-direction:column;min-height:calc(100vh - 126px)}
+  .chathead{display:flex;align-items:center;gap:12px;border-bottom:1px solid var(--line);padding-bottom:14px;margin-bottom:6px}
+  .chathead .ic2{width:38px;height:38px;border-radius:10px;background:var(--purple-bg);color:var(--purple-d);
+    display:flex;align-items:center;justify-content:center;flex:0 0 38px}
+  .chathead .nm{font-size:15px;font-weight:600}
+  .chathead .ds{font-size:12px;color:var(--ink3);margin-top:1px}
+  .chathead .chg{margin-left:auto;font-size:12.5px;color:var(--purple-d);cursor:pointer;font-weight:500;
+    border:1px solid var(--line2);border-radius:20px;padding:6px 12px;background:#fff}
+  .chathead .chg:hover{border-color:var(--purple-br);background:var(--purple-bg)}
+  .thread{flex:1;display:flex;flex-direction:column;gap:14px;padding:18px 0}
+  .msg{display:flex;gap:10px;max-width:86%}
+  .msg.user{align-self:flex-end}
+  .msg.ai{align-self:flex-start}
+  .msg .msgava{width:28px;height:28px;border-radius:8px;background:var(--purple-bg);color:var(--purple-d);
+    display:flex;align-items:center;justify-content:center;flex:0 0 28px;margin-top:2px}
+  .bubble{border-radius:14px;padding:11px 14px;font-size:13.5px;line-height:1.5}
+  .msg.user .bubble{background:var(--purple);color:#fff;border-bottom-right-radius:5px}
+  .msg.ai .bubble{background:var(--panel);border:1px solid var(--line);color:var(--ink);border-bottom-left-radius:5px}
+  .msg.ai .bubble .who2{font-size:10.5px;font-weight:700;letter-spacing:.02em;color:var(--purple-dd);margin-bottom:4px;text-transform:uppercase}
+  @keyframes pulse{0%,100%{opacity:.45}50%{opacity:1}}
+  .typing .bubble{animation:pulse 1s ease-in-out infinite}
+  .chatcomposer{margin-top:auto;position:sticky;bottom:0;background:#fff}
+
+  @media(max-width:680px){.cards2,.grid2{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside class="side">
+  <div class="brand">Abacum <span class="sl">/ntelligence</span><sup>®</sup> Hub</div>
+
+  <div class="nav active" data-view="home"><span class="ic">🏠</span> Home</div>
+
+  <div class="navlbl">Workspace</div>
+  <div class="nav" data-view="chats"><span class="ic">💬</span> Chats</div>
+  <div class="nav" data-view="agents"><span class="ic">🤖</span> Agents</div>
+
+  <div class="navlbl">Setup</div>
+  <div class="nav" data-view="tools"><span class="ic">🧩</span> Tools</div>
+  <div class="nav" data-view="context"><span class="ic">📚</span> Context</div>
+</aside>
+
+<!-- MAIN -->
+<main class="main">
+  <div class="glow"></div>
+  <div class="wrap">
+
+    <!-- HOME -->
+    <section class="view on" id="home">
+      <h1 class="hi">Hi Adam, how can I help you?</h1>
+      <div class="ask">
+        <input class="askinput" id="homeInput" placeholder="Ask Abacum Intelligence" autocomplete="off">
+        <div class="row">
+          <button class="pill plus" id="homePlus" data-picker title="Select agent">+</button>
+          <button class="pill agentpill" id="homeAgentPill" data-picker title="Active agent">
+            <span class="ic-ag" id="homeAgentIc">🧠</span> <span id="homeAgentName">Agent</span> <span style="opacity:.55">⌄</span>
+          </button>
+          <button class="send" id="homeSend" title="Send">↑</button>
+        </div>
+      </div>
+      <div class="chips">
+        <div class="chip">Build a 13-week cashflow model</div>
+        <div class="chip">Create a dataset-sync agent</div>
+      </div>
+
+      <div class="cards2">
+        <div class="card">
+          <div class="ch"><b>Recent chats</b><span class="viewall" data-view="chats">View all →</span></div>
+          <div id="homeRecent"><div class="empty">Your chats will appear here. Start one above.</div></div>
+        </div>
+        <div class="card">
+          <div class="ch"><b>Agents</b><span class="viewall" data-view="agents">View all →</span></div>
+          <div class="lrow click" style="border:0;padding:0;margin:0" data-name="Cash Flow Analyst" data-type="Agent" data-trigger="scheduled">
+            <div class="ic2">🤖</div>
+            <div class="body">
+              <div class="nm">Cash Flow Analyst</div>
+              <div class="ds">Watches the 13-week cash position, answers questions abou…</div>
+            </div>
+            <div class="badges"><span class="bdg b-agent">Agent</span><span class="dot"></span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="secbar">
+        <b style="font-size:17px;letter-spacing:-.2px">Activity</b>
+        <div class="seg"><span class="on">All</span><span>By me</span><span>By Intelligence</span><span style="color:var(--purple-d)">View all →</span></div>
+      </div>
+
+      <div class="feedlbl">Today</div>
+      <div class="arow"><div class="ava">👤</div><div class="tx"><div class="t"><b>Adam Goddenyu</b> created <b>13W Cash Flow</b></div><div class="s">Model · CASH_13W</div></div><div class="meta"><span class="who">AG</span><span class="time">2h ago</span></div></div>
+      <div class="arow"><div class="ava">🤖</div><div class="tx"><div class="t"><b>Abacum Intelligence</b> created a space <b>Q2 Cash Outlook</b></div><div class="s">Space · from the reforecast</div></div><div class="meta"><span class="who ai">··</span><span class="time">3h ago</span></div></div>
+      <div class="arow"><div class="ava">🤖</div><div class="tx"><div class="t"><b>Abacum Intelligence</b> applied an optimization to <b>Payroll &amp; Benefits</b></div><div class="s">Variable · 13W Cash Flow</div></div><div class="meta"><span class="who ai">··</span><span class="time">4h ago</span></div></div>
+
+      <div class="feedlbl">Yesterday</div>
+      <div class="arow"><div class="ava">💬</div><div class="tx"><div class="t"><b>Adam Goddenyu</b> commented on <b>Region forecast</b></div><div class="s">Model · 13W Cash Flow</div></div><div class="meta"><span class="who">AG</span><span class="time">5:20 PM</span></div></div>
+      <div class="arow"><div class="ava">🤖</div><div class="tx"><div class="t"><b>Abacum Intelligence</b> flagged a sync issue on <b>NetSuite Actuals</b></div><div class="s">Dataset · stale 26h</div></div><div class="meta"><span class="who ai">··</span><span class="time">6:00 PM</span></div></div>
+      <div class="arow"><div class="ava">👤</div><div class="tx"><div class="t"><b>Adam Goddenyu</b> reforecast <b>Customer Collections by region</b></div><div class="s">Model · 13W Cash Flow</div></div><div class="meta"><span class="who">AG</span><span class="time">2:10 PM</span></div></div>
+    </section>
+
+    <!-- CHAT THREAD -->
+    <section class="view" id="chat">
+      <div class="chathead">
+        <div class="ic2" id="chatAgentIcon">🧠</div>
+        <div><div class="nm" id="chatAgentName">Agent</div><div class="ds" id="chatAgentSub">Orchestrator · default</div></div>
+        <button class="chg" id="newChat">+ New chat</button>
+      </div>
+      <div class="thread" id="thread"></div>
+      <div class="ask chatcomposer">
+        <input class="askinput" id="chatInput" placeholder="Reply…" autocomplete="off">
+        <div class="row">
+          <button class="pill plus" id="chatPlus" data-picker title="Select agent">+</button>
+          <button class="pill agentpill" id="chatAgentPill" data-picker title="Active agent">
+            <span class="ic-ag" id="chatPillIc">🧠</span> <span id="chatPillName">Agent</span> <span style="opacity:.55">⌄</span>
+          </button>
+          <button class="send" id="chatSend" title="Send">↑</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- CHATS -->
+    <section class="view" id="chats">
+      <div class="vh"><h2>Chats</h2></div>
+      <div class="vsub">Conversations with the Agent. A chat is the manual <b>Trigger</b> — the Agent runs because you asked.</div>
+      <div id="chatsList"><div class="card"><div class="empty">Your chats will appear here. Start one from Home.</div></div></div>
+    </section>
+
+    <!-- AGENTS -->
+    <section class="view" id="agents">
+      <div class="vh"><h2>Agents</h2></div>
+      <div class="vsub">A reasoning unit: instructions + a set of <b>Tools</b> + <b>Context</b> + scope. The chat orchestrator is the default Agent. Saved configurations live in the library as <b>Agent templates</b> you clone to start. Each agent carries its own <b>Trigger</b>.</div>
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">
+        <div class="tabs" style="margin-bottom:0"><span class="tab on">My agents</span><span class="tab">Agent library (templates)</span></div>
+        <button class="pill" id="newAgentBtn" style="font-weight:600;color:var(--purple-dd);background:var(--purple-bg);border-color:var(--purple-br)">+ New agent</button>
+      </div>
+      <div class="hint" style="margin-top:12px">Click an agent to see its trigger, context and the tools it can use.</div>
+
+      <div id="agentsList">
+      <div class="lrow click" data-name="Cash Flow Analyst" data-type="Agent" data-trigger="scheduled"><div class="ic2">🤖</div><div class="body"><div class="nm">Cash Flow Analyst</div><div class="ds">Watches the 13-week cash position, answers questions about runway.</div></div><div class="badges"><span class="bdg b-trig">Trigger · Scheduled</span><span class="bdg b-agent">Agent</span><span class="bdg b-live"><span class="dot"></span>Live</span></div></div>
+      <div class="lrow click" data-name="Dataset Sync" data-type="Agent" data-trigger="event"><div class="ic2">🔄</div><div class="body"><div class="nm">Dataset Sync</div><div class="ds">Keeps NetSuite actuals in sync and flags breaks.</div></div><div class="badges"><span class="bdg b-trig">Trigger · Event</span><span class="bdg b-agent">Agent</span><span class="bdg b-live"><span class="dot"></span>Live</span></div></div>
+      <div class="lrow click" data-name="Variance Analyzer" data-type="Template" data-trigger="chat"><div class="ic2">📈</div><div class="body"><div class="nm">Variance Analyzer</div><div class="ds">Explains budget vs. actual variance with driver commentary.</div></div><div class="badges"><span class="bdg b-trig">Trigger · Chat</span><span class="bdg b-tmpl">Template</span></div></div>
+      <div class="lrow click" data-name="Dataset Mismatch Detector" data-type="Template" data-trigger="chat"><div class="ic2">🔍</div><div class="body"><div class="nm">Dataset Mismatch Detector</div><div class="ds">Spots schema and type mismatches across datasets.</div></div><div class="badges"><span class="bdg b-trig">Trigger · Chat</span><span class="bdg b-tmpl">Template</span></div></div>
+      </div>
+    </section>
+
+    <!-- TOOLS (was Capabilities) -->
+    <section class="view" id="tools">
+      <div class="vh"><h2>Tools</h2></div>
+      <div class="vsub">Atomic, deterministic things an agent can do — no judgment. Named by outcome, not by object. Each tool carries its own <b>permission scope</b> (read / write / destructive); an agent's reach is the sum of its tools' scopes.</div>
+      <div class="note"><b>Permissions live here.</b> There's no separate guardrail layer. On top of each tool's scope, an agent always defers to your existing Abacum permissions — it can never do something the person running it couldn't do themselves.</div>
+
+      <div class="lrow"><div class="ic2">🗂️</div><div class="body"><div class="nm">Make a space</div><div class="ds">Create a new analysis space.</div></div><div class="badges"><span class="bdg b-write">Write · needs approval</span></div></div>
+      <div class="lrow"><div class="ic2">✏️</div><div class="body"><div class="nm">Edit a model</div><div class="ds">Change variables or structure in a live model.</div></div><div class="badges"><span class="bdg b-write">Write · needs approval</span></div></div>
+      <div class="lrow"><div class="ic2">📄</div><div class="body"><div class="nm">Build a report</div><div class="ds">Assemble tables, charts and KPI cards into a report.</div></div><div class="badges"><span class="bdg b-write">Write · needs approval</span></div></div>
+      <div class="lrow"><div class="ic2">🗣️</div><div class="body"><div class="nm">Language → budget inputs</div><div class="ds">Translate natural language into structured input values.</div></div><div class="badges"><span class="bdg b-write">Write · needs approval</span></div></div>
+      <div class="lrow"><div class="ic2">📈</div><div class="body"><div class="nm">Run variance</div><div class="ds">Compute variance and driver decomposition.</div></div><div class="badges"><span class="bdg b-read">Read · auto</span></div></div>
+      <div class="lrow"><div class="ic2">🔍</div><div class="body"><div class="nm">Detect mismatches</div><div class="ds">Scan datasets for schema and type breaks.</div></div><div class="badges"><span class="bdg b-read">Read · auto</span></div></div>
+      <div class="lrow"><div class="ic2">🗑️</div><div class="body"><div class="nm">Delete a version</div><div class="ds">Remove a model version permanently.</div></div><div class="badges"><span class="bdg b-dest">Destructive · explicit approval</span></div></div>
+    </section>
+
+    <!-- CONTEXT (was Data) -->
+    <section class="view" id="context">
+      <div class="vh"><h2>Context</h2></div>
+      <div class="vsub">What an agent can see and ground on — broader than just data. Each type is independently grantable, so this screen also answers “what does this agent know, and what is it blind to?”</div>
+      <div class="grid2">
+        <div class="gctx"><div class="gt">Model structure</div><div class="gd">Datasets, dimensions, formulas, variables.</div><div class="badges" style="justify-content:flex-start"><span class="bdg b-on">Granted</span></div></div>
+        <div class="gctx"><div class="gt">Definitions &amp; semantics</div><div class="gd">Metric definitions (ARR, net-new), driver logic, glossary.</div><div class="badges" style="justify-content:flex-start"><span class="bdg b-on">Granted</span></div></div>
+        <div class="gctx"><div class="gt">Data &amp; values</div><div class="gd">Actuals, versions, scenarios.</div><div class="badges" style="justify-content:flex-start"><span class="bdg b-on">Granted · read</span></div></div>
+        <div class="gctx"><div class="gt">Org &amp; spaces</div><div class="gd">Org chart, spaces, ownership, roles.</div><div class="badges" style="justify-content:flex-start"><span class="bdg b-on">Granted</span></div></div>
+        <div class="gctx"><div class="gt">Memory</div><div class="gd">Past runs, prior outputs, user corrections.</div><div class="badges" style="justify-content:flex-start"><span class="bdg b-on">Granted</span></div></div>
+        <div class="gctx"><div class="gt">Connected sources</div><div class="gd">NetSuite, HiBob connected · Notion, Gong available.</div><div class="badges" style="justify-content:flex-start"><span class="bdg b-on">Partial</span></div></div>
+      </div>
+
+      <div class="feedlbl" style="margin-top:28px">Custom uploads</div>
+      <div class="hint" style="margin:2px 0 12px">Customer-provided context. Upload docs, policies or sheets to ground agents on knowledge that isn't already in Abacum.</div>
+      <div id="uploadsList">
+        <div class="lrow"><div class="ic2">📄</div><div class="body"><div class="nm">FY26 Operating Plan.pdf</div><div class="ds">Uploaded by Adam · 2.1 MB</div></div><div class="badges"><span class="bdg b-on">Granted</span></div></div>
+        <div class="lrow"><div class="ic2">📊</div><div class="body"><div class="nm">Headcount plan Q3.xlsx</div><div class="ds">Uploaded by Adam · 480 KB</div></div><div class="badges"><span class="bdg b-on">Granted</span></div></div>
+      </div>
+      <button class="pill" id="uploadBtn" style="margin-top:4px">+ Upload context</button>
+      <input type="file" id="uploadInput" multiple style="display:none">
+    </section>
+
+  </div>
+</main>
+
+<!-- AGENT PICKER POPOVER -->
+<div class="agentmenu" id="agentMenu"></div>
+
+<!-- AGENT MODAL -->
+<div class="overlay" id="overlay" style="position:fixed;inset:0;background:rgba(28,26,40,.40);display:none;align-items:center;justify-content:center;z-index:50;padding:24px">
+  <div class="modal" role="dialog" aria-modal="true" style="background:#fff;border-radius:18px;max-width:620px;width:100%;max-height:88vh;overflow-y:auto;box-shadow:0 24px 60px rgba(20,20,40,.28);border:1px solid var(--line)">
+    <div class="mhead" style="display:flex;align-items:center;gap:12px;padding:18px 22px;border-bottom:1px solid var(--line);position:sticky;top:0;background:#fff;z-index:1">
+      <div class="ic2" style="width:38px;height:38px;border-radius:10px;background:var(--purple-bg);color:var(--purple-d);display:flex;align-items:center;justify-content:center;flex:0 0 38px">🤖</div>
+      <div><div class="mt" id="m-name" style="font-size:17px;font-weight:600">Agent</div><div class="ms" id="m-type" style="font-size:12px;color:var(--ink3);margin-top:1px">Agent · live</div></div>
+      <button class="x" id="m-close" aria-label="Close" style="margin-left:auto;width:30px;height:30px;border-radius:8px;border:1px solid var(--line2);background:#fff;cursor:pointer;color:var(--ink2);font-size:16px;line-height:1;display:flex;align-items:center;justify-content:center">×</button>
+    </div>
+    <div class="mbody" style="padding:20px 22px">
+      <div class="msec" style="margin-bottom:22px">
+        <h4 style="font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--ink3);margin:0 0 4px">Trigger</h4>
+        <div class="mh-sub" style="font-size:11.5px;color:var(--ink3);margin:0 0 10px">How this agent starts. Set per agent.</div>
+        <div class="seg" id="m-trig">
+          <span data-t="chat">Chat</span>
+          <span data-t="scheduled">Scheduled</span>
+          <span data-t="event">Event</span>
+        </div>
+      </div>
+      <div class="msec" style="margin-bottom:22px">
+        <h4 style="font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--ink3);margin:0 0 4px">Prompt</h4>
+        <div class="mh-sub" style="font-size:11.5px;color:var(--ink3);margin:0 0 10px">The instructions that define what this agent does.</div>
+        <textarea class="prompt" id="m-prompt" readonly style="width:100%;min-height:120px;border:1px solid var(--line2);border-radius:11px;padding:12px 13px;font:inherit;font-size:13px;color:var(--ink);line-height:1.55;resize:vertical;background:#fff"></textarea>
+      </div>
+      <div class="msec" style="margin-bottom:0">
+        <button class="send" id="m-start" style="width:auto;border-radius:20px;padding:8px 16px;background:var(--purple-bg);border:1px solid var(--purple-br);color:var(--purple-dd);font-weight:600;font-size:13px">Start a chat with this agent →</button>
+      </div>
+    </div>
+    <div class="mfoot" style="border-top:1px solid var(--line);padding:14px 22px;font-size:12px;color:var(--ink2);background:var(--panel);border-radius:0 0 18px 18px;line-height:1.5"><b>Permissions:</b> this agent defers to your existing Abacum permissions. It can never do something you couldn't do yourself — there's no separate guardrail layer to manage.</div>
+  </div>
+</div>
+
+<!-- CREATE AGENT MODAL -->
+<div class="overlay" id="createOverlay" style="position:fixed;inset:0;background:rgba(28,26,40,.40);display:none;align-items:center;justify-content:center;z-index:55;padding:24px">
+  <div class="modal" role="dialog" aria-modal="true" style="background:#fff;border-radius:18px;max-width:560px;width:100%;max-height:88vh;overflow-y:auto;box-shadow:0 24px 60px rgba(20,20,40,.28);border:1px solid var(--line)">
+    <div class="mhead" style="display:flex;align-items:center;gap:12px;padding:18px 22px;border-bottom:1px solid var(--line)">
+      <div class="ic2" style="width:38px;height:38px;border-radius:10px;background:var(--purple-bg);color:var(--purple-d);display:flex;align-items:center;justify-content:center;flex:0 0 38px">🤖</div>
+      <div><div class="mt" style="font-size:17px;font-weight:600">New agent</div><div class="ms" style="font-size:12px;color:var(--ink3);margin-top:1px">Instructions + tools + context + a trigger</div></div>
+      <button class="x" id="c-close" aria-label="Close" style="margin-left:auto;width:30px;height:30px;border-radius:8px;border:1px solid var(--line2);background:#fff;cursor:pointer;color:var(--ink2);font-size:16px;line-height:1;display:flex;align-items:center;justify-content:center">×</button>
+    </div>
+    <div class="mbody" style="padding:20px 22px">
+      <div class="msec" style="margin-bottom:18px">
+        <h4 style="font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--ink3);margin:0 0 6px">Name</h4>
+        <input id="c-name" placeholder="e.g. Revenue Recognition Reviewer" autocomplete="off" style="width:100%;border:1px solid var(--line2);border-radius:11px;padding:10px 12px;font:inherit;font-size:14px;color:var(--ink);background:#fff;outline:0">
+      </div>
+      <div class="msec" style="margin-bottom:18px">
+        <h4 style="font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--ink3);margin:0 0 6px">Trigger</h4>
+        <div class="seg" id="c-trig"><span class="on" data-t="chat">Chat</span><span data-t="scheduled">Scheduled</span><span data-t="event">Event</span></div>
+      </div>
+      <div class="msec" style="margin-bottom:0">
+        <h4 style="font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--ink3);margin:0 0 6px">Prompt</h4>
+        <textarea id="c-prompt" placeholder="Describe what this agent does, what it should ground on, and how it should answer." style="width:100%;min-height:110px;border:1px solid var(--line2);border-radius:11px;padding:12px 13px;font:inherit;font-size:13px;color:var(--ink);line-height:1.55;resize:vertical;background:#fff;outline:0"></textarea>
+      </div>
+    </div>
+    <div class="mfoot" style="border-top:1px solid var(--line);padding:14px 22px;background:var(--panel);border-radius:0 0 18px 18px;display:flex;gap:10px;justify-content:flex-end">
+      <button class="pill" id="c-cancel">Cancel</button>
+      <button class="pill" id="c-create" style="font-weight:600;color:#fff;background:var(--purple-d);border-color:var(--purple-d)">Create agent</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  /* ---------- navigation ---------- */
+  const navs = document.querySelectorAll('.nav');
+  const views = document.querySelectorAll('.view');
+  function go(id){
+    views.forEach(v=>v.classList.toggle('on', v.id===id));
+    const navId = (id==='chat') ? 'chats' : id;
+    navs.forEach(n=>n.classList.toggle('active', n.dataset.view===navId));
+    document.querySelector('.main').scrollTo({top:0,behavior:'instant'});
+  }
+  navs.forEach(n=>n.addEventListener('click',()=>go(n.dataset.view)));
+  document.querySelectorAll('.viewall[data-view]').forEach(el=>el.addEventListener('click',()=>go(el.dataset.view)));
+
+  /* ---------- agents ---------- */
+  const AGENTS = [
+    {name:'Agent',                      group:'default', icon:'🧠', sub:'Orchestrator · default'},
+    {name:'Cash Flow Analyst',          group:'mine',    icon:'🤖', sub:'My agent · Live'},
+    {name:'Dataset Sync',               group:'mine',    icon:'🔄', sub:'My agent · Live'},
+    {name:'Variance Analyzer',          group:'tmpl',    icon:'📈', sub:'Template'},
+    {name:'Dataset Mismatch Detector',  group:'tmpl',    icon:'🔍', sub:'Template'}
+  ];
+  const byName = n => AGENTS.find(a=>a.name===n) || AGENTS[0];
+  const iconFor = n => byName(n).icon;
+
+  const REPLIES = {
+    'Agent':"Here's how I'd approach that. I'll pull your latest actuals and the 13-week model, then walk it through step by step. Want me to start from collections or from burn?",
+    'Cash Flow Analyst':"On the current 13-week position, runway is ~18 weeks at today's burn. The biggest swing is Customer Collections in weeks 4–6. I can flag the at-risk invoices and model a downside case — want the downside?",
+    'Dataset Sync':"Heads up: NetSuite Actuals last synced 26h ago and is stale. I can re-run the sync now and report any schema breaks before they reach your models. Proceed?",
+    'Variance Analyzer':"Top variance this period is Payroll & Benefits at +$142k vs. budget, mostly new-hire timing. Next is Software at +$31k. Want the full driver breakdown?",
+    'Dataset Mismatch Detector':"Scanned your connected datasets. One type mismatch: `region` is text in NetSuite but enum in the model. I'd cast it at the typing layer. Want the fix steps?"
+  };
+  const replyFor = n => REPLIES[n] || "On it. I'll work through that grounded on your model and the context you've granted me, then report back with the key numbers and assumptions.";
+
+  function esc(s){ return String(s).replace(/[&<>"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m])); }
+
+  /* ---------- agent picker popover ---------- */
+  const menu = document.getElementById('agentMenu');
+  let pickerPick = null;
+  function buildMenu(selected){
+    const groups = [['default','Default'],['mine','My agents'],['tmpl','Templates']];
+    let html = '';
+    groups.forEach(([g,lbl])=>{
+      const items = AGENTS.filter(a=>a.group===g);
+      if(!items.length) return;
+      html += '<div class="amlbl">'+lbl+'</div>';
+      items.forEach(a=>{
+        html += '<div class="amrow '+(a.name===selected?'sel':'')+'" data-agent="'+esc(a.name)+'">'
+              +   '<div class="amic">'+a.icon+'</div>'
+              +   '<div class="amtx"><div class="amn">'+esc(a.name)+'</div><div class="ams">'+esc(a.sub)+'</div></div>'
+              +   '<div class="amck">✓</div>'
+              + '</div>';
+      });
+    });
+    return html;
+  }
+  function openPicker(anchor, selected, onPick){
+    menu.innerHTML = buildMenu(selected);
+    menu.classList.add('on');
+    pickerPick = onPick;
+    menu.querySelectorAll('.amrow').forEach(r=>{
+      r.addEventListener('click',()=>{ const n=r.dataset.agent; closePicker(); if(pickerPick) pickerPick(n); });
+    });
+    const r = anchor.getBoundingClientRect();
+    const mh = menu.offsetHeight, mw = menu.offsetWidth;
+    let top = r.bottom + 6;
+    if(top + mh > window.innerHeight - 8) top = Math.max(8, r.top - 6 - mh);
+    let left = r.left;
+    if(left + mw > window.innerWidth - 8) left = window.innerWidth - 8 - mw;
+    menu.style.top = top + 'px';
+    menu.style.left = Math.max(8,left) + 'px';
+  }
+  function closePicker(){ menu.classList.remove('on'); }
+  document.addEventListener('click',e=>{
+    if(menu.classList.contains('on') && !menu.contains(e.target) && !e.target.closest('[data-picker]')) closePicker();
+  });
+  window.addEventListener('resize', closePicker);
+
+  /* ---------- home composer ---------- */
+  let homeAgent = 'Agent';
+  const homeInput = document.getElementById('homeInput');
+  function setHomePill(){
+    const a = byName(homeAgent);
+    document.getElementById('homeAgentName').textContent = a.name;
+    document.getElementById('homeAgentIc').textContent = a.icon;
+    document.getElementById('homeAgentPill').classList.toggle('active', a.group!=='default');
+  }
+  document.getElementById('homePlus').addEventListener('click',function(){ openPicker(this, homeAgent, n=>{ homeAgent=n; setHomePill(); }); });
+  document.getElementById('homeAgentPill').addEventListener('click',function(){ openPicker(this, homeAgent, n=>{ homeAgent=n; setHomePill(); }); });
+  document.getElementById('homeSend').addEventListener('click',()=>doHomeSend());
+  homeInput.addEventListener('keydown',e=>{ if(e.key==='Enter' && !e.shiftKey){ e.preventDefault(); doHomeSend(); } });
+  function doHomeSend(){ const v = homeInput.value.trim(); if(!v) return; startChat(v, homeAgent); homeInput.value=''; }
+  document.querySelectorAll('.chips .chip').forEach(c=>{
+    c.addEventListener('click',()=>startChat(c.textContent.trim(), homeAgent));
+  });
+
+  /* ---------- chat state ---------- */
+  let chats = [];          // {id, title, agent, msgs:[{role,text,agent}]}
+  let activeChatId = null;
+  const chatInput = document.getElementById('chatInput');
+  const getActive = () => chats.find(c=>c.id===activeChatId);
+
+  function setChatAgent(name){
+    const a = byName(name);
+    document.getElementById('chatAgentName').textContent = a.name;
+    document.getElementById('chatAgentSub').textContent  = a.sub;
+    document.getElementById('chatAgentIcon').textContent = a.icon;
+    document.getElementById('chatPillName').textContent  = a.name;
+    document.getElementById('chatPillIc').textContent    = a.icon;
+    document.getElementById('chatAgentPill').classList.toggle('active', a.group!=='default');
+  }
+  function renderThread(chat, opts){
+    opts = opts || {};
+    const t = document.getElementById('thread');
+    let html = chat.msgs.map(m=>{
+      if(m.role==='user') return '<div class="msg user"><div class="bubble">'+esc(m.text)+'</div></div>';
+      return '<div class="msg ai"><div class="msgava">'+iconFor(m.agent)+'</div><div class="bubble"><div class="who2">'+esc(m.agent)+'</div>'+esc(m.text)+'</div></div>';
+    }).join('');
+    if(opts.typing){
+      html += '<div class="msg ai typing"><div class="msgava">'+iconFor(opts.agent)+'</div><div class="bubble"><div class="who2">'+esc(opts.agent)+'</div>Thinking…</div></div>';
+    }
+    t.innerHTML = html;
+    const main = document.querySelector('.main');
+    main.scrollTo({top:main.scrollHeight, behavior:'smooth'});
+  }
+  function replyFrom(chat, agent){
+    renderThread(chat, {typing:true, agent:agent});
+    setTimeout(()=>{
+      if(activeChatId!==chat.id) return;
+      chat.msgs.push({role:'ai', text:replyFor(agent), agent:agent});
+      renderThread(chat);
+      renderChats();
+    }, 700);
+  }
+  function startChat(text, agent){
+    const chat = {id:Date.now(), title:text, agent:agent, msgs:[]};
+    chats.unshift(chat);
+    activeChatId = chat.id;
+    setChatAgent(agent);
+    chat.msgs.push({role:'user', text:text});
+    renderThread(chat);
+    go('chat');
+    replyFrom(chat, agent);
+    renderChats();
+  }
+  function openChat(chat){
+    activeChatId = chat.id;
+    setChatAgent(chat.agent);
+    renderThread(chat);
+    go('chat');
+  }
+  function doChatSend(){
+    const chat = getActive(); if(!chat) return;
+    const v = chatInput.value.trim(); if(!v) return;
+    chat.msgs.push({role:'user', text:v});
+    chatInput.value='';
+    renderThread(chat);
+    replyFrom(chat, chat.agent);
+    renderChats();
+  }
+  document.getElementById('chatPlus').addEventListener('click',function(){ const c=getActive(); openPicker(this, c?c.agent:'Agent', n=>{ if(c){ c.agent=n; } setChatAgent(n); }); });
+  document.getElementById('chatAgentPill').addEventListener('click',function(){ const c=getActive(); openPicker(this, c?c.agent:'Agent', n=>{ if(c){ c.agent=n; } setChatAgent(n); }); });
+  document.getElementById('chatSend').addEventListener('click',()=>doChatSend());
+  chatInput.addEventListener('keydown',e=>{ if(e.key==='Enter' && !e.shiftKey){ e.preventDefault(); doChatSend(); } });
+  document.getElementById('newChat').addEventListener('click',()=>{ go('home'); homeInput.focus(); });
+
+  /* ---------- chats list + home recent ---------- */
+  function renderChats(){
+    const list = document.getElementById('chatsList');
+    if(!chats.length){
+      list.innerHTML = '<div class="card"><div class="empty">Your chats will appear here. Start one from Home.</div></div>';
+    } else {
+      list.innerHTML = chats.map(c=>{
+        const a = byName(c.agent);
+        const n = c.msgs.length;
+        return '<div class="lrow click chatitem" data-id="'+c.id+'"><div class="ic2">'+a.icon+'</div>'
+             +   '<div class="body"><div class="nm">'+esc(c.title)+'</div><div class="ds">'+n+' message'+(n===1?'':'s')+' · '+esc(a.name)+'</div></div>'
+             +   '<div class="badges"><span class="bdg b-trig">Trigger · Chat</span></div></div>';
+      }).join('');
+      list.querySelectorAll('.chatitem').forEach(r=>{
+        r.addEventListener('click',()=>{ const c=chats.find(x=>x.id==r.dataset.id); if(c) openChat(c); });
+      });
+    }
+    const rc = document.getElementById('homeRecent');
+    if(!chats.length){
+      rc.innerHTML = '<div class="empty">Your chats will appear here. Start one above.</div>';
+    } else {
+      rc.innerHTML = chats.slice(0,3).map(c=>{
+        const a = byName(c.agent);
+        return '<div class="arow recentitem" data-id="'+c.id+'" style="cursor:pointer">'
+             +   '<div class="ava">'+a.icon+'</div>'
+             +   '<div class="tx"><div class="t">'+esc(c.title)+'</div><div class="s">'+esc(a.name)+'</div></div>'
+             +   '<div class="meta"><span class="time">now</span></div></div>';
+      }).join('');
+      rc.querySelectorAll('.recentitem').forEach(r=>{
+        r.addEventListener('click',()=>{ const c=chats.find(x=>x.id==r.dataset.id); if(c) openChat(c); });
+      });
+    }
+  }
+
+  /* ---------- agent modal (from Agents view) ---------- */
+  const overlay = document.getElementById('overlay');
+  let modalAgent = 'Agent';
+  const PROMPTS = {
+    'Cash Flow Analyst':'You are the Cash Flow Analyst. Watch the 13-week cash position, flag risks to runway, and answer questions about collections, payroll and burn. Keep answers grounded in the latest actuals and call out assumptions.',
+    'Dataset Sync':'You are Dataset Sync. Keep NetSuite actuals in sync, detect breaks early, and explain what changed. Never overwrite source data; surface conflicts for review.',
+    'Variance Analyzer':'You are the Variance Analyzer. Explain budget vs. actual variance with clear driver commentary. Lead with the largest drivers and quantify each.',
+    'Dataset Mismatch Detector':'You are the Dataset Mismatch Detector. Scan datasets for schema and type mismatches, and report each break with the affected field and a suggested fix.'
+  };
+  function openAgent(name,type,trigger){
+    modalAgent = name;
+    document.getElementById('m-name').textContent = name;
+    document.getElementById('m-type').textContent = (type==='Template' ? 'Agent template · in library' : 'Agent · live');
+    document.querySelectorAll('#m-trig span').forEach(s=>s.classList.toggle('on', s.dataset.t===trigger));
+    document.getElementById('m-prompt').value = PROMPTS[name] || ('You are '+name+'.');
+    overlay.style.display = 'flex';
+  }
+  function closeAgent(){ overlay.style.display = 'none'; }
+  document.querySelectorAll('.lrow.click[data-name]').forEach(r=>{
+    r.addEventListener('click',()=>openAgent(r.dataset.name, r.dataset.type, r.dataset.trigger));
+  });
+  document.getElementById('m-close').addEventListener('click',closeAgent);
+  document.getElementById('m-start').addEventListener('click',()=>{ closeAgent(); homeAgent = modalAgent; setHomePill(); startChat('Help me with '+modalAgent.toLowerCase()+' work.', modalAgent); });
+  overlay.addEventListener('click',e=>{ if(e.target===overlay) closeAgent(); });
+  document.addEventListener('keydown',e=>{ if(e.key==='Escape'){ closeAgent(); closeCreate(); closePicker(); } });
+  document.querySelectorAll('#m-trig span').forEach(s=>{
+    s.addEventListener('click',()=>{ document.querySelectorAll('#m-trig span').forEach(x=>x.classList.remove('on')); s.classList.add('on'); });
+  });
+
+  /* ---------- create agent ---------- */
+  const createOverlay = document.getElementById('createOverlay');
+  let cTrigger = 'chat';
+  function openCreate(){
+    document.getElementById('c-name').value = '';
+    document.getElementById('c-prompt').value = '';
+    cTrigger = 'chat';
+    document.querySelectorAll('#c-trig span').forEach(s=>s.classList.toggle('on', s.dataset.t==='chat'));
+    createOverlay.style.display = 'flex';
+    document.getElementById('c-name').focus();
+  }
+  function closeCreate(){ createOverlay.style.display = 'none'; }
+  document.getElementById('newAgentBtn').addEventListener('click', openCreate);
+  document.getElementById('c-close').addEventListener('click', closeCreate);
+  document.getElementById('c-cancel').addEventListener('click', closeCreate);
+  createOverlay.addEventListener('click', e=>{ if(e.target===createOverlay) closeCreate(); });
+  document.querySelectorAll('#c-trig span').forEach(s=>{
+    s.addEventListener('click',()=>{ document.querySelectorAll('#c-trig span').forEach(x=>x.classList.remove('on')); s.classList.add('on'); cTrigger = s.dataset.t; });
+  });
+  document.getElementById('c-create').addEventListener('click',()=>{
+    const raw = document.getElementById('c-name').value.trim() || 'New agent';
+    const prompt = document.getElementById('c-prompt').value.trim() || ('You are '+raw+'.');
+    let name = raw, i = 2;
+    while(AGENTS.some(a=>a.name===name)){ name = raw+' '+i; i++; }
+    AGENTS.push({name:name, group:'mine', icon:'🤖', sub:'My agent · Live'});
+    PROMPTS[name] = prompt;
+    const trigLbl = {chat:'Trigger · Chat', scheduled:'Trigger · Scheduled', event:'Trigger · Event'}[cTrigger];
+    const ds = prompt.length>80 ? esc(prompt.slice(0,80))+'…' : esc(prompt);
+    const row = document.createElement('div');
+    row.className = 'lrow click';
+    row.dataset.name = name; row.dataset.type = 'Agent'; row.dataset.trigger = cTrigger;
+    row.innerHTML = '<div class="ic2">🤖</div><div class="body"><div class="nm">'+esc(name)+'</div><div class="ds">'+ds+'</div></div>'
+                  + '<div class="badges"><span class="bdg b-trig">'+trigLbl+'</span><span class="bdg b-agent">Agent</span><span class="bdg b-live"><span class="dot"></span>Live</span></div>';
+    row.addEventListener('click',()=>openAgent(name,'Agent',cTrigger));
+    document.getElementById('agentsList').prepend(row);
+    closeCreate();
+  });
+
+  /* ---------- custom uploads ---------- */
+  const uploadInput = document.getElementById('uploadInput');
+  document.getElementById('uploadBtn').addEventListener('click',()=>uploadInput.click());
+  uploadInput.addEventListener('change',()=>{
+    const list = document.getElementById('uploadsList');
+    Array.from(uploadInput.files).forEach(f=>{
+      const kb = Math.max(1, Math.round(f.size/1024));
+      const size = kb>1024 ? (kb/1024).toFixed(1)+' MB' : kb+' KB';
+      const ext = (f.name.split('.').pop()||'').toLowerCase();
+      const icon = ext==='pdf' ? '📄' : (['xlsx','xls','csv'].includes(ext) ? '📊' : (['docx','doc'].includes(ext) ? '📝' : '📎'));
+      const row = document.createElement('div');
+      row.className = 'lrow';
+      row.innerHTML = '<div class="ic2">'+icon+'</div><div class="body"><div class="nm">'+esc(f.name)+'</div><div class="ds">Uploaded by Adam · '+size+'</div></div>'
+                    + '<div class="badges"><span class="bdg b-on">Granted</span></div>';
+      list.appendChild(row);
+    });
+    uploadInput.value = '';
+  });
+
+  /* ---------- init ---------- */
+  setHomePill();
+  setChatAgent('Agent');
+  renderChats();
+</script>
+</body>
+</html>
