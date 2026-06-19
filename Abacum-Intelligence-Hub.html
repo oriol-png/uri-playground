@@ -1,0 +1,650 @@
+<title>Abacum Intelligence Hub</title>
+<style>
+  /* ---- Abacum design tokens (light theme, from packages/design-tokens) ---- */
+  :root{
+    --bg:#ffffff; --bg2:#fafafa; --bg3:#f5f5f5;
+    --line:#e5e5e5; --line2:#d4d4d4;
+    --tx:#171717; --tx2:#525252; --tx3:#a1a1a1;
+    --icon2:#737373; --success:#007a55; --warning:#a65f00;
+    --purple:#6E18F5;
+    --pp-bg:#e6e6fa; --pp-tx:#3f2d85; --pp-br:#dbdbf9;
+    --gn-bg:#d0fae5; --gn-tx:#004f3b;
+    --or-bg:#ffe9d4; --or-tx:#7e2210;
+    --rd-bg:#ffe2e2; --rd-tx:#82181a;
+    --yl-bg:#fef9c2; --yl-tx:#733e0a;
+    --ai:linear-gradient(135deg,#F7A23B 0%,#ED6C6C 45%,#7700FE 100%);
+    --r-s:6px; --r-m:8px; --r-l:12px;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;height:100%}
+  body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,system-ui,sans-serif;color:var(--tx);
+    background:var(--bg);display:flex;font-size:14px;-webkit-font-smoothing:antialiased}
+  button{font:inherit;cursor:pointer;border:none;background:none;color:inherit}
+  svg{display:block}
+  .ic{width:18px;height:18px;flex:0 0 18px;stroke:currentColor;stroke-width:1.8;fill:none;
+    stroke-linecap:round;stroke-linejoin:round}
+  .ic.sm{width:15px;height:15px;flex-basis:15px}
+  .ic.fill{fill:currentColor;stroke:none}
+
+  /* ---- sidebar ---- */
+  .side{width:248px;flex:0 0 248px;border-right:1px solid var(--line);height:100vh;position:sticky;top:0;
+    background:var(--bg);overflow-y:auto;padding:18px 14px;display:flex;flex-direction:column;gap:6px}
+  .brand{display:flex;align-items:center;gap:9px;padding:6px 8px 16px;margin-bottom:4px}
+  .brand .mark{width:24px;height:24px;border-radius:7px;background:var(--ai);flex:0 0 24px}
+  .brand .wm{font-size:15px;font-weight:600;letter-spacing:-.2px}
+  .brand .wm .i{color:var(--purple)}
+  .navlbl{font-size:10.5px;font-weight:700;letter-spacing:.07em;color:var(--tx3);text-transform:uppercase;
+    padding:14px 10px 4px}
+  .nav{display:flex;align-items:center;gap:11px;padding:8px 10px;border-radius:var(--r-m);cursor:pointer;
+    color:var(--tx2);font-weight:500;user-select:none}
+  .nav:hover{background:var(--bg2)}
+  .nav.on{background:var(--bg3);color:var(--tx);font-weight:600}
+  .nav.on .ic{color:var(--purple)}
+  .nav .ic{color:var(--icon2)}
+
+  /* ---- main ---- */
+  .main{flex:1;min-width:0;height:100vh;overflow-y:auto;position:relative}
+  .wrap{max-width:1080px;margin:0 auto;padding:24px 32px 80px}
+  .htitle{display:flex;align-items:center;gap:10px;padding-bottom:18px;margin-bottom:22px;border-bottom:1px solid var(--line)}
+  .htitle .wm{font-size:18px;font-weight:600}.htitle .wm .i{color:var(--purple)}
+  .htitle .sub{font-size:18px;font-weight:600;color:var(--tx)}
+
+  .view{display:none}.view.on{display:block}
+
+  /* ---- home ---- */
+  .hero{position:relative;display:flex;flex-direction:column;align-items:center;gap:18px;padding:40px 0 14px}
+  .glow{position:absolute;top:40px;left:50%;transform:translateX(-50%);width:min(760px,92%);height:240px;
+    border-radius:42%;background:linear-gradient(100deg,rgba(247,162,59,.16),rgba(237,108,108,.12) 46%,rgba(119,0,254,.16));
+    filter:blur(54px);pointer-events:none;z-index:0}
+  .hi{position:relative;z-index:1;font-size:29px;font-weight:700;letter-spacing:-.02em;margin:0}
+  .composer{position:relative;z-index:1;width:100%;max-width:680px;border:1px solid var(--line2);border-radius:22px;
+    background:#fff;box-shadow:0 8px 30px rgba(23,23,23,.08);padding:16px 16px 12px}
+  .composer.flat{box-shadow:none;border-radius:var(--r-l);padding:10px 12px 8px;max-width:none}
+  .askinput{width:100%;border:0;outline:0;font:inherit;font-size:15px;background:transparent;color:var(--tx);
+    resize:none;display:block;padding:4px 2px 14px;min-height:26px}
+  .askinput::placeholder{color:var(--tx3)}
+  .crow{display:flex;align-items:center;gap:6px}
+  .iconbtn{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+    color:var(--icon2)}
+  .iconbtn:hover{background:var(--bg2)}
+  .pickpill{display:inline-flex;align-items:center;gap:5px;height:26px;padding:0 8px;border-radius:var(--r-s);
+    border:1px solid var(--line);color:var(--tx2);font-size:12px;font-weight:600}
+  .pickpill:hover{background:var(--bg2)}
+  .pickpill.act{background:var(--pp-bg);border-color:var(--pp-br);color:var(--purple)}
+  .pickpill .ic{color:inherit}
+  .send{margin-left:auto;width:30px;height:30px;border-radius:50%;background:var(--bg3);color:var(--tx3);
+    display:flex;align-items:center;justify-content:center}
+  .send.on{background:var(--purple);color:#fff}
+  .chips{position:relative;z-index:1;display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
+  .chip{height:30px;padding:0 13px;display:flex;align-items:center;border:1px solid var(--line);border-radius:16px;
+    background:#fff;font-size:12.5px;color:var(--tx2)}
+  .chip:hover{background:var(--pp-bg);border-color:var(--pp-br);color:var(--pp-tx)}
+  .foot-note{position:relative;z-index:1;font-size:11px;color:var(--tx3);text-align:center;margin-top:2px}
+  .foot-note a{color:var(--purple);cursor:pointer;text-decoration:none}
+
+  .cards2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:34px 0}
+  .card{border:1px solid var(--line);border-radius:var(--r-l);background:#fff;box-shadow:0 1px 3px rgba(23,23,23,.05)}
+  .card .ch{display:flex;align-items:center;height:46px;padding:0 16px;border-bottom:1px solid var(--line)}
+  .card .ch b{flex:1;font-size:14px}
+  .viewall{display:inline-flex;align-items:center;gap:3px;color:var(--purple);font-size:12px;font-weight:600}
+  .card .body{padding:8px}
+  .mini{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:var(--r-s);cursor:pointer}
+  .mini:hover{background:var(--bg2)}
+  .mini .tile{width:28px;height:28px;border-radius:var(--r-s);background:var(--bg2);border:1px solid var(--line);
+    display:flex;align-items:center;justify-content:center;color:var(--icon2);flex:0 0 28px}
+  .mini.ag .tile{background:var(--pp-bg);border:0;color:var(--purple)}
+  .mini .nm{flex:1;min-width:0;font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .mini .s{font-size:12px;color:var(--tx3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .empty{text-align:center;color:var(--tx3);font-size:13px;padding:26px 12px}
+
+  .sechead{display:flex;align-items:center;gap:12px;margin:6px 0 12px}
+  .sechead b{font-size:16px}
+  .seg{display:inline-flex;gap:2px;padding:2px;border:1px solid var(--line);border-radius:var(--r-m);background:var(--bg2)}
+  .seg button{padding:5px 11px;border-radius:var(--r-s);font-size:12px;font-weight:600;color:var(--tx2)}
+  .seg button.on{background:#fff;color:var(--tx);box-shadow:0 1px 2px rgba(23,23,23,.10)}
+  .feed{border:1px solid var(--line);border-radius:var(--r-l);overflow:hidden}
+  .feedgrp{padding:6px 14px;background:var(--bg2);border-top:1px solid var(--line);font-size:11px;font-weight:700;
+    letter-spacing:.04em;text-transform:uppercase;color:var(--tx3)}
+  .feedgrp:first-child{border-top:0}
+  .frow{display:flex;align-items:center;gap:12px;padding:10px 14px;border-top:1px solid var(--line)}
+  .frow .tile{width:30px;height:30px;border-radius:var(--r-s);background:var(--bg2);border:1px solid var(--line);
+    display:flex;align-items:center;justify-content:center;color:var(--icon2);flex:0 0 30px}
+  .frow .tx{flex:1;min-width:0}
+  .frow .t{font-size:13px;color:var(--tx2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .frow .t b{color:var(--tx);font-weight:600}
+  .frow .m{font-size:12px;color:var(--tx3)}
+  .frow .who{width:22px;height:22px;border-radius:50%;background:var(--pp-bg);color:var(--purple);font-size:10px;
+    font-weight:700;display:flex;align-items:center;justify-content:center;flex:0 0 22px}
+  .frow .who.ai{background:var(--bg3);color:var(--tx2)}
+  .frow .when{font-size:12px;color:var(--tx3);white-space:nowrap}
+
+  /* ---- generic page header ---- */
+  .ph{display:flex;align-items:flex-end;gap:12px;flex-wrap:wrap;margin-bottom:20px}
+  .ph .htxt{flex:1;min-width:0}
+  .ph h2{font-size:22px;font-weight:700;letter-spacing:-.01em;margin:0}
+  .ph p{margin:4px 0 0;font-size:13px;line-height:20px;color:var(--tx2);max-width:640px}
+  .btn{display:inline-flex;align-items:center;gap:6px;height:34px;padding:0 14px;border-radius:var(--r-m);
+    font-size:13px;font-weight:600;white-space:nowrap}
+  .btn.primary{background:var(--purple);color:#fff}
+  .btn.primary:hover{filter:brightness(.96)}
+  .btn.ghost{border:1px solid var(--line);color:var(--tx);font-weight:500}
+  .btn.ghost:hover{background:var(--bg2)}
+
+  /* ---- list rows ---- */
+  .listbox{border:1px solid var(--line);border-radius:var(--r-m);overflow:hidden}
+  .lrow{display:flex;align-items:center;gap:12px;padding:11px 14px;border-top:1px solid var(--line)}
+  .lrow:first-child{border-top:0}
+  .lrow.click{cursor:pointer}
+  .lrow.click:hover{background:var(--bg2)}
+  .lrow .tile{width:30px;height:30px;border-radius:50%;background:var(--bg2);display:flex;align-items:center;
+    justify-content:center;color:var(--icon2);flex:0 0 30px}
+  .lrow .bd{flex:1;min-width:0}
+  .lrow .nm{font-size:13.5px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .lrow .ds{font-size:12.5px;color:var(--tx2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+  .badge{flex:0 0 auto;font-size:11px;font-weight:600;line-height:18px;padding:0 8px;border-radius:9px;white-space:nowrap}
+  .b-read{background:var(--gn-bg);color:var(--gn-tx)}
+  .b-write{background:var(--or-bg);color:var(--or-tx)}
+  .b-dest{background:var(--rd-bg);color:var(--rd-tx)}
+  .b-granted{background:var(--gn-bg);color:var(--gn-tx)}
+  .b-partial{background:var(--yl-bg);color:var(--yl-tx)}
+  .b-tmpl{background:var(--bg3);color:var(--tx2)}
+  .b-live{background:var(--gn-bg);color:var(--gn-tx)}
+  .trig{display:inline-flex;align-items:center;gap:4px;height:20px;padding:0 7px;border-radius:9px;border:1px solid var(--line);
+    background:var(--bg2);color:var(--tx2);font-size:11px;font-weight:600}
+
+  .note{display:flex;gap:10px;padding:13px 16px;border:1px solid var(--line);border-radius:var(--r-m);background:var(--bg2);
+    font-size:12.5px;line-height:19px;color:var(--tx2)}
+  .note b{color:var(--tx)}
+  .note .ic{color:var(--icon2);flex:0 0 18px}
+
+  /* ---- agent cards ---- */
+  .agcards{display:flex;flex-direction:column;gap:12px}
+  .agcard{border:1px solid var(--line);border-radius:var(--r-m);background:#fff;padding:14px 16px;cursor:pointer;
+    transition:border-color .12s,box-shadow .12s}
+  .agcard:hover{border-color:var(--pp-br);box-shadow:0 4px 16px rgba(83,74,183,.08)}
+  .agcard .top{display:flex;align-items:flex-start;gap:10px}
+  .agcard .tile{width:34px;height:34px;border-radius:var(--r-m);background:var(--pp-bg);color:var(--purple);
+    display:flex;align-items:center;justify-content:center;flex:0 0 34px}
+  .agcard .hd{flex:1;min-width:0}
+  .agcard .row1{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+  .agcard .nm{font-size:14px;font-weight:600}
+  .agcard .ds{margin-top:3px;font-size:12px;line-height:18px;color:var(--tx2)}
+  .agcard .pills{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+  .agchip{font-size:12px;line-height:22px;padding:0 9px;border-radius:11px;background:var(--bg2);border:1px solid var(--line);color:var(--tx2)}
+  .play{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--icon2);flex:0 0 28px}
+  .play:hover{background:var(--bg2)}
+
+  /* ---- context grid ---- */
+  .ctxgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .ctxcard{border:1px solid var(--line);border-radius:var(--r-m);padding:14px 16px;display:flex;flex-direction:column;gap:8px}
+  .ctxcard .t{font-size:13.5px;font-weight:600}
+  .ctxcard .d{flex:1;font-size:12.5px;line-height:18px;color:var(--tx2)}
+  .subhead{font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.4px;color:var(--tx3)}
+
+  /* ---- chat ---- */
+  #chat .chathead{display:flex;align-items:center;gap:12px;border-bottom:1px solid var(--line);padding-bottom:14px;margin-bottom:8px}
+  #chat .chathead .tile{width:36px;height:36px;border-radius:var(--r-m);background:var(--pp-bg);color:var(--purple);
+    display:flex;align-items:center;justify-content:center;flex:0 0 36px}
+  #chat .chathead .nm{font-size:15px;font-weight:600}
+  #chat .chathead .s{font-size:12px;color:var(--tx3)}
+  .thread{display:flex;flex-direction:column;gap:14px;padding:18px 0;min-height:340px}
+  .msg{max-width:80%;display:flex;gap:10px}
+  .msg.user{align-self:flex-end}
+  .msg.ai{align-self:flex-start}
+  .msg .av{width:28px;height:28px;border-radius:var(--r-s);background:var(--pp-bg);color:var(--purple);display:flex;
+    align-items:center;justify-content:center;flex:0 0 28px;margin-top:2px}
+  .bubble{border-radius:14px;padding:11px 14px;font-size:13.5px;line-height:1.5}
+  .msg.user .bubble{background:var(--purple);color:#fff;border-bottom-right-radius:5px}
+  .msg.ai .bubble{background:var(--bg2);border:1px solid var(--line);border-bottom-left-radius:5px}
+  .msg.ai .who2{font-size:10px;font-weight:700;letter-spacing:.02em;text-transform:uppercase;color:var(--pp-tx);margin-bottom:4px}
+
+  /* ---- popover (agent picker) ---- */
+  .pop{position:fixed;z-index:60;width:288px;max-height:60vh;overflow-y:auto;background:#fff;border:1px solid var(--line2);
+    border-radius:13px;box-shadow:0 18px 44px rgba(20,20,40,.18);padding:6px;display:none}
+  .pop.on{display:block}
+  .pop .lbl{font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--tx3);padding:8px 8px 3px}
+  .pop .opt{display:flex;align-items:center;gap:10px;padding:8px;border-radius:var(--r-s);cursor:pointer}
+  .pop .opt:hover{background:var(--bg2)}
+  .pop .opt.sel{background:var(--pp-bg)}
+  .pop .opt .tile{width:28px;height:28px;border-radius:var(--r-s);background:var(--pp-bg);color:var(--purple);
+    display:flex;align-items:center;justify-content:center;flex:0 0 28px}
+  .pop .opt .nm{font-size:13px;font-weight:600}
+  .pop .opt .s{font-size:11px;color:var(--tx3)}
+
+  /* ---- modal ---- */
+  .overlay{position:fixed;inset:0;background:rgba(23,23,23,.42);display:none;align-items:center;justify-content:center;
+    z-index:70;padding:24px}
+  .overlay.on{display:flex}
+  .modal{background:#fff;border-radius:14px;width:600px;max-width:94vw;max-height:88vh;overflow:hidden;
+    display:flex;flex-direction:column;border:1px solid var(--line)}
+  .mhd{display:flex;align-items:center;gap:10px;padding:18px 22px 14px;border-bottom:1px solid var(--line)}
+  .mhd .tile{width:38px;height:38px;border-radius:var(--r-m);background:var(--pp-bg);color:var(--purple);display:flex;
+    align-items:center;justify-content:center;flex:0 0 38px}
+  .mhd .mt{font-size:17px;font-weight:700}
+  .mhd .ms{font-size:12px;color:var(--tx3)}
+  .mhd .x{margin-left:auto;width:30px;height:30px;border-radius:var(--r-s);color:var(--icon2);display:flex;align-items:center;justify-content:center}
+  .mhd .x:hover{background:var(--bg2)}
+  .mbody{padding:18px 22px;overflow-y:auto;display:flex;flex-direction:column;gap:20px}
+  .mfield{display:flex;flex-direction:column;gap:6px}
+  .mfield .hint{font-size:11.5px;color:var(--tx3)}
+  .promptbox{border:1px solid var(--line);border-radius:var(--r-m);padding:12px 13px;font-size:13px;line-height:21px;color:var(--tx);white-space:pre-wrap}
+  input.fld,textarea.fld{width:100%;border:1px solid var(--line);border-radius:var(--r-m);padding:10px 12px;font:inherit;
+    font-size:13.5px;color:var(--tx);outline:none}
+  input.fld:focus,textarea.fld:focus{border-color:var(--line2)}
+  textarea.fld{min-height:96px;line-height:21px;resize:vertical}
+  .mfoot{padding:14px 22px;border-top:1px solid var(--line);background:var(--bg2);display:flex;justify-content:flex-end;gap:10px;font-size:12px;color:var(--tx2);line-height:18px}
+  .mfoot.note-foot{justify-content:flex-start}
+  .mfoot b{color:var(--tx)}
+
+  @media(max-width:760px){.cards2,.ctxgrid{grid-template-columns:1fr}.side{display:none}}
+</style>
+
+<!-- ============ SIDEBAR ============ -->
+<aside class="side">
+  <div class="brand">
+    <div class="mark"></div>
+    <div class="wm">Abacum <span class="i">Intelligence</span></div>
+  </div>
+  <div class="nav on" data-view="home"><svg class="ic" viewBox="0 0 24 24"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></svg> Home</div>
+  <div class="navlbl">Workspace</div>
+  <div class="nav" data-view="chats"><svg class="ic" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg> Chats</div>
+  <div class="nav" data-view="agents"><svg class="ic" viewBox="0 0 24 24"><rect x="4" y="8" width="16" height="11" rx="2"/><path d="M12 8V4"/><circle cx="9" cy="13" r="1"/><circle cx="15" cy="13" r="1"/></svg> Agents</div>
+  <div class="navlbl">Setup</div>
+  <div class="nav" data-view="tools"><svg class="ic" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg> Tools</div>
+  <div class="nav" data-view="context"><svg class="ic" viewBox="0 0 24 24"><path d="M4 5a2 2 0 0 1 2-2h13v18H6a2 2 0 0 1-2-2z"/><path d="M19 17H6a2 2 0 0 0-2 2"/></svg> Context</div>
+</aside>
+
+<!-- ============ MAIN ============ -->
+<main class="main">
+  <div class="wrap">
+    <div class="htitle"><span class="wm">Abacum <span class="i">Intelligence</span></span><span class="sub">Hub</span></div>
+
+    <!-- HOME -->
+    <section class="view on" id="home">
+      <div class="hero">
+        <div class="glow"></div>
+        <h1 class="hi">Hi Adam, how can I help you?</h1>
+        <div class="composer">
+          <textarea class="askinput" id="homeInput" rows="1" placeholder="Ask Abacum Intelligence"></textarea>
+          <div class="crow">
+            <button class="iconbtn" title="Attach"><svg class="ic sm" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></button>
+            <button class="pickpill" data-picker="home" id="homePill"><svg class="ic sm" viewBox="0 0 24 24"><path d="M12 3l1.6 4.4L18 9l-4.4 1.6L12 15l-1.6-4.4L6 9l4.4-1.6z"/></svg><span id="homePillName">Agent</span><svg class="ic sm" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg></button>
+            <button class="send" id="homeSend"><svg class="ic sm" viewBox="0 0 24 24"><path d="M12 19V5M5 12l7-7 7 7"/></svg></button>
+          </div>
+        </div>
+        <div class="chips" id="homeChips">
+          <div class="chip">Build a 13-week cashflow model</div>
+          <div class="chip">Create a dataset-sync agent</div>
+          <div class="chip">Forecast collections by region</div>
+        </div>
+        <div class="foot-note">AI can make mistakes. See <a>Abacum Academy</a>.</div>
+      </div>
+
+      <div class="cards2">
+        <div class="card">
+          <div class="ch"><b>Recent chats</b><span class="viewall" data-view="chats">View all →</span></div>
+          <div class="body" id="homeRecent"></div>
+        </div>
+        <div class="card">
+          <div class="ch"><b>Agents</b><span class="viewall" data-view="agents">View all →</span></div>
+          <div class="body" id="homeAgents"></div>
+        </div>
+      </div>
+
+      <div class="sechead"><b>Activity</b><span style="flex:1"></span>
+        <div class="seg"><button class="on">All</button><button>By me</button><button>By Intelligence</button></div>
+      </div>
+      <div class="feed" id="activityFeed"></div>
+    </section>
+
+    <!-- CHAT -->
+    <section class="view" id="chat">
+      <div class="chathead">
+        <div class="tile" id="chatTile"><svg class="ic" viewBox="0 0 24 24"><path d="M12 3l1.6 4.4L18 9l-4.4 1.6L12 15l-1.6-4.4L6 9l4.4-1.6z"/></svg></div>
+        <div><div class="nm" id="chatName">Agent</div><div class="s" id="chatSub">Orchestrator · the entry point</div></div>
+        <button class="btn ghost" id="newChat" style="margin-left:auto">+ New chat</button>
+      </div>
+      <div class="thread" id="thread"></div>
+      <div class="composer flat">
+        <textarea class="askinput" id="chatInput" rows="1" placeholder="Reply…"></textarea>
+        <div class="crow">
+          <button class="iconbtn" title="Attach"><svg class="ic sm" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></button>
+          <button class="pickpill" data-picker="chat" id="chatPill"><svg class="ic sm" viewBox="0 0 24 24"><path d="M12 3l1.6 4.4L18 9l-4.4 1.6L12 15l-1.6-4.4L6 9l4.4-1.6z"/></svg><span id="chatPillName">Agent</span><svg class="ic sm" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg></button>
+          <button class="send" id="chatSend"><svg class="ic sm" viewBox="0 0 24 24"><path d="M12 19V5M5 12l7-7 7 7"/></svg></button>
+        </div>
+      </div>
+    </section>
+
+    <!-- CHATS -->
+    <section class="view" id="chats">
+      <div class="ph"><div class="htxt"><h2>Chats</h2><p>Conversations with Abacum Intelligence. A chat is the manual <b>Trigger</b> — the agent runs because you asked.</p></div>
+        <button class="btn primary" data-view="home">+ New chat</button></div>
+      <div class="listbox" id="chatsList"></div>
+    </section>
+
+    <!-- AGENTS -->
+    <section class="view" id="agents">
+      <div class="ph"><div class="htxt"><h2>Agents</h2><p>A reasoning unit: instructions + a set of <b>Tools</b> + <b>Context</b> + scope. The chat orchestrator is the default Agent. Saved configurations live in the library as <b>Agent templates</b> you clone to start. Each agent carries its own <b>Trigger</b>.</p></div>
+        <button class="btn primary" id="newAgentBtn">+ New agent</button></div>
+      <div class="seg" style="margin-bottom:16px"><button class="on" id="tabMine">My agents</button><button id="tabLib">Agent library</button></div>
+      <div class="agcards" id="agentsList"></div>
+    </section>
+
+    <!-- TOOLS -->
+    <section class="view" id="tools">
+      <div class="ph"><div class="htxt"><h2>Tools</h2><p>Atomic, deterministic things an agent can do — named by outcome. Each tool carries its own permission scope; an agent's reach is the sum of its tools' scopes.</p></div></div>
+      <div class="note" style="margin-bottom:16px"><svg class="ic" viewBox="0 0 24 24"><path d="M12 3l7 3v6c0 4.4-3 7.6-7 9-4-1.4-7-4.6-7-9V6z"/></svg>
+        <div><b>Permissions live here.</b> There's no separate guardrail layer. On top of each tool's scope, an agent always defers to your existing Abacum permissions — it can never do something you couldn't do yourself.</div></div>
+      <div class="listbox" id="toolsList"></div>
+    </section>
+
+    <!-- CONTEXT -->
+    <section class="view" id="context">
+      <div class="ph"><div class="htxt"><h2>Context</h2><p>What an agent can see and ground on. Each type is independently grantable, so this screen also answers "what does this agent know, and what is it blind to?"</p></div></div>
+      <div class="ctxgrid" id="ctxGrid" style="margin-bottom:24px"></div>
+      <div class="subhead" style="margin-bottom:8px">Custom uploads</div>
+      <p style="font-size:12.5px;color:var(--tx3);margin:0 0 12px">Customer-provided context. Upload docs, policies or sheets to ground agents on knowledge that isn't already in Abacum.</p>
+      <div class="listbox" id="uploadsList" style="margin-bottom:12px"></div>
+      <button class="btn ghost" id="uploadBtn">+ Upload context</button>
+    </section>
+  </div>
+</main>
+
+<!-- popover + modals -->
+<div class="pop" id="pop"></div>
+<div class="overlay" id="detailOverlay"><div class="modal" id="detailModal"></div></div>
+<div class="overlay" id="createOverlay"><div class="modal" id="createModal"></div></div>
+
+<script>
+(function(){
+  var ICON = {
+    sparkle:'<path d="M12 3l1.6 4.4L18 9l-4.4 1.6L12 15l-1.6-4.4L6 9l4.4-1.6z"/>',
+    robot:'<rect x="4" y="8" width="16" height="11" rx="2"/><path d="M12 8V4"/><circle cx="9" cy="13" r="1"/><circle cx="15" cy="13" r="1"/>',
+    chat:'<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>',
+    clock:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+    bolt:'<path d="M13 3L4 14h7l-1 7 9-11h-7z"/>',
+    play:'<path d="M7 5l12 7-12 7z" fill="currentColor" stroke="none"/>',
+    doc:'<path d="M6 2h8l4 4v16H6z"/><path d="M14 2v4h4"/>',
+    x:'<path d="M6 6l12 12M18 6L6 18"/>',
+    arrow:'<path d="M5 12h14M13 6l6 6-6 6"/>'
+  };
+  function svg(p,cls){return '<svg class="ic '+(cls||'')+'" viewBox="0 0 24 24">'+p+'</svg>';}
+  function esc(s){return String(s).replace(/[&<>"]/g,function(m){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m];});}
+
+  /* ---- data ---- */
+  var DEFAULT_AGENT='Agent';
+  var AGENTS={
+    'Agent':{group:'default',sub:'Orchestrator · the entry point',trigger:'Chat',live:true,
+      prompt:"You are Abacum Intelligence — the orchestrator. Talk to the user, pull the right model and context, and pick the right steps. Hand off to a specialised agent when one fits."},
+    'Cash Flow Analyst':{group:'mine',sub:'Trigger · Chat',trigger:'Chat',live:true,
+      desc:'Watches the 13-week cash position, answers questions about it, and flags runway risk before it bites. Picks its own steps each time.',
+      chips:['Goal-driven','Reads the live model','On demand'],
+      prompt:'You are the Cash Flow Analyst. Watch the 13-week cash position, flag risks to runway, and answer questions about collections, payroll and burn. Keep answers grounded in the latest actuals and call out assumptions.'},
+    'Dataset sync supervisor':{group:'mine',sub:'Trigger · Scheduled',trigger:'Scheduled',live:true,sched:'Daily · end of day · Last run Today, 6:00 PM',
+      desc:'Checks every dataset sync at end of day and posts any failure or stale sync to Slack. Same fixed path every run.',
+      chips:['Daily · end of day','Slack · #finance-ops','Checks 14 dataset syncs'],
+      prompt:'You are the Dataset sync supervisor. At end of day, check every dataset sync. If anything fails or is stale, post it to Slack #finance-ops. Never overwrite source data; surface conflicts for review.'},
+    'Variance Analyzer':{group:'tmpl',sub:'Template',trigger:'Chat',
+      desc:'Explains budget vs. actual variance with clear driver commentary, largest drivers first.',
+      chips:['Template','Driver commentary'],
+      prompt:'You are the Variance Analyzer. Explain budget vs. actual variance with clear driver commentary. Lead with the largest drivers and quantify each.'},
+    'Dataset Mismatch Detector':{group:'tmpl',sub:'Template',trigger:'Chat',
+      desc:'Spots schema and type mismatches across datasets and suggests the fix for each break.',
+      chips:['Template','Schema checks'],
+      prompt:'You are the Dataset Mismatch Detector. Scan datasets for schema and type mismatches, and report each break with the affected field and a suggested fix.'}
+  };
+  var createdAgents=[];
+  var TOOLS=[
+    {name:'Make a space',desc:'Create a new analysis space.',perm:'write'},
+    {name:'Edit a model',desc:'Change variables or structure in a live model.',perm:'write'},
+    {name:'Build a report',desc:'Assemble tables, charts and KPI cards into a report.',perm:'write'},
+    {name:'Language → budget inputs',desc:'Translate natural language into structured input values.',perm:'write'},
+    {name:'Run variance',desc:'Compute variance and driver decomposition.',perm:'read'},
+    {name:'Detect mismatches',desc:'Scan datasets for schema and type breaks.',perm:'read'},
+    {name:'Delete a version',desc:'Remove a model version permanently.',perm:'dest'}
+  ];
+  var PERM={read:['Read · auto','b-read'],write:['Write · needs approval','b-write'],dest:['Destructive · explicit approval','b-dest']};
+  var CONTEXT=[
+    {t:'Model structure',d:'Datasets, dimensions, formulas, variables.',s:'Granted'},
+    {t:'Definitions & semantics',d:'Metric definitions (ARR, net-new), driver logic, glossary.',s:'Granted'},
+    {t:'Data & values',d:'Actuals, versions, scenarios.',s:'Granted'},
+    {t:'Org & spaces',d:'Org chart, spaces, ownership, roles.',s:'Granted'},
+    {t:'Memory',d:'Past runs, prior outputs, user corrections.',s:'Granted'},
+    {t:'Connected sources',d:'NetSuite, Salesforce connected · Stripe, Teams available.',s:'Partial'}
+  ];
+  var UPLOADS=[{name:'FY26 Operating Plan.pdf',meta:'Uploaded by Adam · 2.1 MB'},{name:'Headcount plan Q3.xlsx',meta:'Uploaded by Adam · 480 KB'}];
+  var ACTIVITY=[
+    {g:'Today',actor:'Adam Goddenyu',ai:false,act:'created',tgt:'13W Cash Flow',meta:'Model · CASH_13W',when:'2h ago',ic:ICON.bolt},
+    {g:'Today',actor:'Abacum Intelligence',ai:true,act:'created a space',tgt:'Q2 Cash Outlook',meta:'Space · from the reforecast',when:'3h ago',ic:ICON.bolt},
+    {g:'Today',actor:'Abacum Intelligence',ai:true,act:'applied an optimization to',tgt:'Payroll & Benefits',meta:'Variable · 13W Cash Flow',when:'4h ago',ic:ICON.bolt},
+    {g:'Yesterday',actor:'Adam Goddenyu',ai:false,act:'commented on',tgt:'Region forecast',meta:'Model · 13W Cash Flow',when:'5:20 PM',ic:ICON.chat},
+    {g:'Yesterday',actor:'Abacum Intelligence',ai:true,act:'flagged a sync issue on',tgt:'NetSuite Actuals',meta:'Dataset · stale 26h',when:'6:00 PM',ic:ICON.bolt}
+  ];
+  var REPLY={
+    'Agent':"Here's how I'd approach that. I'll pull your latest actuals and the 13-week model, then walk it through step by step. Want me to start from collections or from burn?",
+    'Cash Flow Analyst':"On the current 13-week position, runway is ~18 weeks at today's burn. The biggest swing is Customer Collections in weeks 4–6. I can flag the at-risk invoices and model a downside case — want the downside?",
+    'Dataset sync supervisor':"Heads up: NetSuite Actuals last synced 26h ago and is stale. I can re-run the sync now and report any schema breaks before they reach your models. Proceed?",
+    'Variance Analyzer':"Top variance this period is Payroll & Benefits at +$142k vs. budget, mostly new-hire timing. Next is Software at +$31k. Want the full driver breakdown?",
+    'Dataset Mismatch Detector':"Scanned your connected datasets. One type mismatch: region is text in NetSuite but enum in the model. I'd cast it at the typing layer. Want the fix steps?"
+  };
+
+  /* ---- nav ---- */
+  function go(id){
+    document.querySelectorAll('.view').forEach(function(v){v.classList.toggle('on',v.id===id);});
+    var navId=id==='chat'?'chats':id;
+    document.querySelectorAll('.nav').forEach(function(n){n.classList.toggle('on',n.dataset.view===navId);});
+    document.querySelector('.main').scrollTo({top:0});
+  }
+  document.querySelectorAll('[data-view]').forEach(function(el){el.addEventListener('click',function(){go(el.dataset.view);});});
+
+  /* ---- agent picker popover ---- */
+  var pop=document.getElementById('pop'),pickCb=null;
+  function buildPop(sel){
+    var groups=[['default','Default'],['mine','My agents'],['tmpl','Agent library']];
+    var html='';
+    groups.forEach(function(gp){
+      var names=Object.keys(AGENTS).concat(createdAgents.map(function(a){return a.name;}))
+        .filter(function(n){var a=AGENTS[n]||findCreated(n);return a&&(a.group||'mine')===gp[0];});
+      if(gp[0]==='mine')names=names.concat(createdAgents.map(function(a){return a.name;}));
+      names=names.filter(function(v,i,s){return s.indexOf(v)===i;});
+      if(!names.length)return;
+      html+='<div class="lbl">'+gp[1]+'</div>';
+      names.forEach(function(n){
+        var a=AGENTS[n]||findCreated(n);
+        html+='<div class="opt'+(n===sel?' sel':'')+'" data-agent="'+esc(n)+'"><div class="tile">'+svg(n===DEFAULT_AGENT?ICON.sparkle:ICON.robot,'sm')+'</div>'
+          +'<div><div class="nm">'+esc(n)+'</div><div class="s">'+esc(a.sub||'My agent')+'</div></div></div>';
+      });
+    });
+    return html;
+  }
+  function findCreated(n){for(var i=0;i<createdAgents.length;i++)if(createdAgents[i].name===n)return createdAgents[i];return null;}
+  function openPicker(anchor,sel,cb){
+    pop.innerHTML=buildPop(sel);pop.classList.add('on');pickCb=cb;
+    pop.querySelectorAll('.opt').forEach(function(o){o.addEventListener('click',function(){closePicker();if(pickCb)pickCb(o.dataset.agent);});});
+    var r=anchor.getBoundingClientRect();var top=r.bottom+6,h=pop.offsetHeight;
+    if(top+h>innerHeight-8)top=Math.max(8,r.top-6-h);
+    var left=Math.min(r.left,innerWidth-8-pop.offsetWidth);
+    pop.style.top=top+'px';pop.style.left=Math.max(8,left)+'px';
+  }
+  function closePicker(){pop.classList.remove('on');}
+  document.addEventListener('click',function(e){if(pop.classList.contains('on')&&!pop.contains(e.target)&&!e.target.closest('[data-picker]'))closePicker();});
+  addEventListener('resize',closePicker);
+
+  /* ---- home composer ---- */
+  var homeAgent=DEFAULT_AGENT,chatAgent=DEFAULT_AGENT;
+  function setHomePill(){document.getElementById('homePillName').textContent=homeAgent;document.getElementById('homePill').classList.toggle('act',homeAgent!==DEFAULT_AGENT);}
+  function setChatPill(){document.getElementById('chatPillName').textContent=chatAgent;document.getElementById('chatPill').classList.toggle('act',chatAgent!==DEFAULT_AGENT);}
+  document.getElementById('homePill').addEventListener('click',function(){openPicker(this,homeAgent,function(n){homeAgent=n;setHomePill();});});
+  document.getElementById('chatPill').addEventListener('click',function(){openPicker(this,chatAgent,function(n){chatAgent=n;setChatPill();setChatHead();});});
+  function autoSize(el){el.style.height='auto';el.style.height=Math.min(el.scrollHeight,140)+'px';}
+  var homeInput=document.getElementById('homeInput'),chatInput=document.getElementById('chatInput');
+  [homeInput,chatInput].forEach(function(el){el.addEventListener('input',function(){autoSize(el);});});
+  function homeSend(){var v=homeInput.value.trim();if(!v)return;startChat(v,homeAgent);homeInput.value='';autoSize(homeInput);}
+  document.getElementById('homeSend').addEventListener('click',homeSend);
+  homeInput.addEventListener('keydown',function(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();homeSend();}});
+  document.querySelectorAll('#homeChips .chip').forEach(function(c){c.addEventListener('click',function(){startChat(c.textContent,homeAgent);});});
+
+  /* ---- chats ---- */
+  var chats=[];
+  function setChatHead(){
+    var a=AGENTS[chatAgent]||findCreated(chatAgent)||AGENTS.Agent;
+    document.getElementById('chatName').textContent=chatAgent;
+    document.getElementById('chatSub').textContent=a.sub||'My agent';
+    document.getElementById('chatTile').innerHTML=svg(chatAgent===DEFAULT_AGENT?ICON.sparkle:ICON.robot);
+  }
+  function renderThread(c,typing){
+    var t=document.getElementById('thread'),h='';
+    c.msgs.forEach(function(m){
+      if(m.role==='user')h+='<div class="msg user"><div class="bubble">'+esc(m.text)+'</div></div>';
+      else h+='<div class="msg ai"><div class="av">'+svg(ICON.sparkle,'sm')+'</div><div class="bubble"><div class="who2">'+esc(m.agent)+'</div>'+esc(m.text)+'</div></div>';
+    });
+    if(typing)h+='<div class="msg ai"><div class="av">'+svg(ICON.sparkle,'sm')+'</div><div class="bubble"><div class="who2">'+esc(typing)+'</div>Thinking…</div></div>';
+    t.innerHTML=h;var m=document.querySelector('.main');m.scrollTo({top:m.scrollHeight,behavior:'smooth'});
+  }
+  function reply(c){
+    renderThread(c,c.agent);
+    setTimeout(function(){c.msgs.push({role:'ai',agent:c.agent,text:REPLY[c.agent]||"On it. I'll work through that grounded on your model and the context you've granted me, then report back with the key numbers."});renderThread(c);renderChats();},650);
+  }
+  function startChat(text,agent){
+    var c={id:Date.now(),title:text,agent:agent,msgs:[{role:'user',text:text}]};
+    chats.unshift(c);chatAgent=agent;setChatPill();setChatHead();renderThread(c);go('chat');reply(c);renderChats();
+    window._active=c;
+  }
+  function chatSend(){var c=window._active;if(!c)return;var v=chatInput.value.trim();if(!v)return;c.agent=chatAgent;c.msgs.push({role:'user',text:v});chatInput.value='';autoSize(chatInput);renderThread(c);reply(c);}
+  document.getElementById('chatSend').addEventListener('click',chatSend);
+  chatInput.addEventListener('keydown',function(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();chatSend();}});
+  document.getElementById('newChat').addEventListener('click',function(){go('home');homeInput.focus();});
+
+  function renderChats(){
+    var list=document.getElementById('chatsList'),rc=document.getElementById('homeRecent');
+    if(!chats.length){list.innerHTML='<div class="empty">Your chats will appear here. Start one from Home.</div>';
+      rc.innerHTML='<div class="empty">Your chats will appear here. Start one above.</div>';return;}
+    list.innerHTML=chats.map(function(c){return '<div class="lrow click" data-id="'+c.id+'"><div class="tile">'+svg(ICON.chat,'sm')+'</div><div class="bd"><div class="nm">'+esc(c.title)+'</div><div class="ds">'+c.msgs.length+' message'+(c.msgs.length===1?'':'s')+' · '+esc(c.agent)+'</div></div><span class="trig">'+svg(ICON.chat,'sm')+'Trigger · Chat</span></div>';}).join('');
+    rc.innerHTML=chats.slice(0,4).map(function(c){return '<div class="mini" data-id="'+c.id+'"><div class="tile">'+svg(ICON.chat,'sm')+'</div><div class="nm">'+esc(c.title)+'</div></div>';}).join('');
+    function open(id){var c=chats.filter(function(x){return x.id==id;})[0];if(c){window._active=c;chatAgent=c.agent;setChatPill();setChatHead();renderThread(c);go('chat');}}
+    list.querySelectorAll('.lrow').forEach(function(r){r.addEventListener('click',function(){open(r.dataset.id);});});
+    rc.querySelectorAll('.mini').forEach(function(r){r.addEventListener('click',function(){open(r.dataset.id);});});
+  }
+
+  /* ---- home agents card + activity ---- */
+  function myAgents(){return ['Cash Flow Analyst','Dataset sync supervisor'].map(function(n){return {name:n,a:AGENTS[n]};}).concat(createdAgents.map(function(a){return {name:a.name,a:a};}));}
+  function renderHomeAgents(){
+    document.getElementById('homeAgents').innerHTML=myAgents().map(function(o){
+      var sched=o.a.trigger!=='Chat';
+      return '<div class="mini ag" data-agent="'+esc(o.name)+'"><div class="tile">'+svg(sched?ICON.clock:ICON.robot,'sm')+'</div>'
+        +'<div style="flex:1;min-width:0"><div class="nm">'+esc(o.name)+'</div><div class="s">'+esc(sched?(o.a.sched||o.a.sub):(o.a.desc||''))+'</div></div>'
+        +'<span class="trig">'+svg(sched?ICON.clock:ICON.chat,'sm')+'Trigger · '+esc(o.a.trigger)+'</span></div>';
+    }).join('');
+    document.getElementById('homeAgents').querySelectorAll('.mini').forEach(function(r){r.addEventListener('click',function(){go('agents');});});
+  }
+  function renderActivity(){
+    var groups=['Today','Yesterday'],html='';
+    groups.forEach(function(g){
+      var rows=ACTIVITY.filter(function(a){return a.g===g;});if(!rows.length)return;
+      html+='<div class="feedgrp">'+g+'</div>';
+      rows.forEach(function(a){
+        html+='<div class="frow"><div class="tile">'+svg(a.ic,'sm')+'</div><div class="tx"><div class="t"><b>'+esc(a.actor)+'</b> '+esc(a.act)+' <b>'+esc(a.tgt)+'</b></div><div class="m">'+esc(a.meta)+'</div></div>'
+          +'<div class="who'+(a.ai?' ai':'')+'">'+(a.ai?'··':'AG')+'</div><div class="when">'+esc(a.when)+'</div></div>';
+      });
+    });
+    document.getElementById('activityFeed').innerHTML=html;
+  }
+
+  /* ---- agents view ---- */
+  var agView='mine';
+  document.getElementById('tabMine').addEventListener('click',function(){agView='mine';this.classList.add('on');document.getElementById('tabLib').classList.remove('on');renderAgents();});
+  document.getElementById('tabLib').addEventListener('click',function(){agView='lib';this.classList.add('on');document.getElementById('tabMine').classList.remove('on');renderAgents();});
+  function renderAgents(){
+    var items;
+    if(agView==='mine')items=myAgents();
+    else items=['Variance Analyzer','Dataset Mismatch Detector'].map(function(n){return {name:n,a:AGENTS[n]};});
+    document.getElementById('agentsList').innerHTML=items.map(function(o){
+      var a=o.a,sched=a.trigger!=='Chat',tmpl=agView==='lib';
+      var pills=(a.chips||[]).map(function(c){return '<span class="agchip">'+esc(c)+'</span>';}).join('');
+      return '<div class="agcard" data-agent="'+esc(o.name)+'" data-tmpl="'+(tmpl?1:'')+'"><div class="top"><div class="tile">'+svg(sched?ICON.clock:ICON.robot)+'</div>'
+        +'<div class="hd"><div class="row1"><span class="nm">'+esc(o.name)+'</span><span class="trig">'+svg(sched?ICON.clock:ICON.chat,'sm')+'Trigger · '+esc(a.trigger)+'</span>'
+        +(tmpl?'<span class="badge b-tmpl">Template</span>':'<span class="badge b-live">Live</span>')+'</div>'
+        +'<div class="ds">'+esc(sched&&!tmpl?(a.sched||''):(a.desc||''))+'</div></div>'
+        +(sched&&!tmpl?'<button class="play" title="Run now">'+svg(ICON.play,'sm')+'</button>':'')+'</div>'
+        +(pills?'<div class="pills">'+pills+'</div>':'')+'</div>';
+    }).join('');
+    document.getElementById('agentsList').querySelectorAll('.agcard').forEach(function(card){
+      card.addEventListener('click',function(e){if(e.target.closest('.play'))return;openDetail(card.dataset.agent,!!card.dataset.tmpl);});
+    });
+  }
+
+  /* ---- detail modal ---- */
+  var detailOverlay=document.getElementById('detailOverlay');
+  function openDetail(name,tmpl){
+    var a=AGENTS[name]||findCreated(name);if(!a)return;
+    var triggers=['Chat','Scheduled','Event'];
+    document.getElementById('detailModal').innerHTML=
+      '<div class="mhd"><div class="tile">'+svg(ICON.robot)+'</div><div><div class="mt">'+esc(name)+'</div><div class="ms">'+(tmpl?'Agent template · in library':'Agent · live')+'</div></div><button class="x" data-close>'+svg(ICON.x,'sm')+'</button></div>'
+      +'<div class="mbody">'
+        +'<div class="mfield"><div class="subhead">Trigger</div><div class="hint">How this agent starts. Set per agent.</div>'
+          +'<div class="seg" style="align-self:flex-start">'+triggers.map(function(tr){return '<button class="'+(tr===a.trigger?'on':'')+'" disabled>'+tr+'</button>';}).join('')+'</div></div>'
+        +'<div class="mfield"><div class="subhead">Prompt</div><div class="hint">The instructions that define what this agent does.</div>'
+          +'<div class="promptbox">'+esc(a.prompt||('You are '+name+'.'))+'</div></div>'
+        +'<button class="btn primary" data-start style="align-self:flex-start">Start a chat with this agent '+svg(ICON.arrow,'sm')+'</button>'
+      +'</div>'
+      +'<div class="mfoot note-foot"><div><b>Permissions:</b> this agent defers to your existing Abacum permissions. It can never do something you couldn\'t do yourself — there\'s no separate guardrail layer to manage.</div></div>';
+    detailOverlay.classList.add('on');
+    detailOverlay.querySelector('[data-close]').addEventListener('click',closeDetail);
+    detailOverlay.querySelector('[data-start]').addEventListener('click',function(){closeDetail();startChat('Help me with '+name.toLowerCase()+' work.',name);});
+  }
+  function closeDetail(){detailOverlay.classList.remove('on');}
+  detailOverlay.addEventListener('click',function(e){if(e.target===detailOverlay)closeDetail();});
+
+  /* ---- create modal ---- */
+  var createOverlay=document.getElementById('createOverlay');
+  document.getElementById('newAgentBtn').addEventListener('click',openCreate);
+  function openCreate(){
+    var triggers=['Chat','Scheduled','Event'];
+    document.getElementById('createModal').innerHTML=
+      '<div class="mhd"><div class="tile">'+svg(ICON.robot)+'</div><div><div class="mt">New agent</div><div class="ms">Instructions + tools + context + a trigger</div></div><button class="x" data-close>'+svg(ICON.x,'sm')+'</button></div>'
+      +'<div class="mbody">'
+        +'<div class="mfield"><div class="subhead">Name</div><input class="fld" id="cName" placeholder="e.g. Revenue Recognition Reviewer"></div>'
+        +'<div class="mfield"><div class="subhead">Trigger</div><div class="seg" id="cTrig" style="align-self:flex-start">'+triggers.map(function(tr,i){return '<button class="'+(i===0?'on':'')+'" data-t="'+tr+'">'+tr+'</button>';}).join('')+'</div></div>'
+        +'<div class="mfield"><div class="subhead">Prompt</div><textarea class="fld" id="cPrompt" placeholder="Describe what this agent does, what it should ground on, and how it should answer."></textarea></div>'
+      +'</div>'
+      +'<div class="mfoot"><button class="btn ghost" data-close>Cancel</button><button class="btn primary" id="cCreate">Create agent</button></div>';
+    createOverlay.classList.add('on');
+    var trig='Chat';
+    createOverlay.querySelectorAll('#cTrig button').forEach(function(b){b.addEventListener('click',function(){createOverlay.querySelectorAll('#cTrig button').forEach(function(x){x.classList.remove('on');});b.classList.add('on');trig=b.dataset.t;});});
+    createOverlay.querySelectorAll('[data-close]').forEach(function(b){b.addEventListener('click',closeCreate);});
+    createOverlay.querySelector('#cCreate').addEventListener('click',function(){
+      var name=(document.getElementById('cName').value.trim())||'New agent';
+      var prompt=(document.getElementById('cPrompt').value.trim())||('You are '+name+'.');
+      while(AGENTS[name]||findCreated(name))name=name+' 2';
+      createdAgents.unshift({name:name,group:'mine',sub:'My agent · Live',trigger:trig,live:true,desc:prompt.length>90?prompt.slice(0,90)+'…':prompt,prompt:prompt,chips:['New agent','Trigger · '+trig]});
+      closeCreate();renderAgents();renderHomeAgents();
+    });
+  }
+  function closeCreate(){createOverlay.classList.remove('on');}
+  createOverlay.addEventListener('click',function(e){if(e.target===createOverlay)closeCreate();});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape'){closeDetail();closeCreate();closePicker();}});
+
+  /* ---- tools / context ---- */
+  function renderTools(){
+    document.getElementById('toolsList').innerHTML=TOOLS.map(function(t){var p=PERM[t.perm];
+      return '<div class="lrow"><div class="tile">'+svg(ICON.bolt,'sm')+'</div><div class="bd"><div class="nm">'+esc(t.name)+'</div><div class="ds">'+esc(t.desc)+'</div></div><span class="badge '+p[1]+'">'+p[0]+'</span></div>';
+    }).join('');
+  }
+  function renderContext(){
+    document.getElementById('ctxGrid').innerHTML=CONTEXT.map(function(c){
+      return '<div class="ctxcard"><div class="t">'+esc(c.t)+'</div><div class="d">'+esc(c.d)+'</div><span class="badge '+(c.s==='Granted'?'b-granted':'b-partial')+'" style="align-self:flex-start">'+c.s+'</span></div>';
+    }).join('');
+    renderUploads();
+  }
+  function renderUploads(){
+    document.getElementById('uploadsList').innerHTML=UPLOADS.map(function(u){
+      return '<div class="lrow"><div class="tile">'+svg(ICON.doc,'sm')+'</div><div class="bd"><div class="nm">'+esc(u.name)+'</div><div class="ds">'+esc(u.meta)+'</div></div><span class="badge b-granted">Granted</span></div>';
+    }).join('');
+  }
+  document.getElementById('uploadBtn').addEventListener('click',function(){UPLOADS.push({name:'Document '+(UPLOADS.length+1)+'.pdf',meta:'Uploaded by Adam · just now'});renderUploads();});
+
+  /* ---- init ---- */
+  setHomePill();setChatPill();renderChats();renderHomeAgents();renderActivity();renderAgents();renderTools();renderContext();
+})();
+</script>
