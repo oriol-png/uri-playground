@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Abacum Integrations — Anchor</title>
+<style>
+  :root{
+    --ink:#12141c; --ink-soft:#3a3f4d; --muted:#6b7280; --line:#e4e7ee;
+    --bg:#f6f7f9; --card:#ffffff; --accent:#4f46e5; --accent-soft:#eef0ff;
+    --green:#0f9d6b; --green-soft:#e6f6ef; --amber:#b7791f; --amber-soft:#fdf3e2;
+    --slate:#64748b; --slate-soft:#eef1f5;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,Helvetica,Arial,sans-serif;
+    background:var(--bg);color:var(--ink);line-height:1.45;padding:32px 28px 48px;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:1180px;margin:0 auto}
+  header.top{margin-bottom:22px}
+  .eyebrow{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);font-weight:700}
+  h1{font-size:27px;font-weight:750;margin:4px 0 6px;letter-spacing:-.01em}
+  .sub{font-size:15px;color:var(--ink-soft);max-width:860px}
+  .headline{margin-top:14px;background:var(--ink);color:#fff;border-radius:12px;padding:14px 18px;font-size:15px;display:flex;gap:12px;align-items:baseline}
+  .headline b{color:#fff}
+  .headline .tag{background:var(--accent);color:#fff;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:3px 8px;border-radius:6px;white-space:nowrap}
+
+  h2.section{font-size:13px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:700;margin:30px 0 12px;display:flex;align-items:center;gap:10px}
+  h2.section::after{content:"";flex:1;height:1px;background:var(--line)}
+
+  /* Architecture flow */
+  .flow{display:grid;grid-template-columns:0.85fr 40px 1.3fr 40px 0.95fr 40px 0.72fr;gap:0;align-items:stretch}
+  .col{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px}
+  .col h3{font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:10px;font-weight:700}
+  .arrow{display:flex;align-items:center;justify-content:center;color:var(--slate);font-size:22px;font-weight:700}
+  .src{font-size:12.5px;color:var(--ink-soft);padding:5px 0;border-bottom:1px dashed var(--line)}
+  .src:last-child{border-bottom:none}
+  .path{border-radius:9px;padding:9px 11px;margin-bottom:7px;border:1px solid var(--line)}
+  .path:last-child{margin-bottom:0}
+  .path .pt{font-weight:700;font-size:13px;display:flex;justify-content:space-between;align-items:center;gap:6px}
+  .path .pd{font-size:11.5px;color:var(--muted);margin-top:2px}
+  .path .badge{font-size:9px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;padding:2px 6px;border-radius:5px;white-space:nowrap}
+  .p-native{background:var(--accent-soft);border-color:#d7dbff}
+  .p-native .badge{background:var(--accent);color:#fff}
+  .p-broker{background:var(--slate-soft)}
+  .p-broker .badge{background:var(--slate);color:#fff}
+  .p-indirect{background:var(--amber-soft);border-color:#f0dcb4}
+  .p-indirect .badge{background:var(--amber);color:#fff}
+  .grouplabel{font-size:10px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);margin:10px 0 6px}
+  .grouplabel.ind{color:var(--amber)}
+  .callout700{margin-top:10px;background:var(--accent);color:#fff;border-radius:9px;padding:9px 11px;font-size:12px}
+  .callout700 b{font-size:14px}
+  .typing{background:linear-gradient(180deg,#fff,#fbfbff);border:1px solid #d7dbff}
+  .typing .chip{display:inline-block;font-size:11px;background:var(--accent-soft);color:var(--accent);border:1px solid #d7dbff;border-radius:20px;padding:3px 9px;margin:3px 3px 0 0;font-weight:600}
+  .dest{background:var(--ink);color:#fff;border:none}
+  .dest h3{color:#aeb4c7}
+  .dest .d{font-size:13px;padding:6px 0;border-bottom:1px solid #2a2e3b;color:#e7e9f0}
+  .dest .d:last-child{border-bottom:none}
+
+  /* two-up cards */
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 18px}
+  .card .k{font-size:12px;text-transform:uppercase;letter-spacing:.06em;font-weight:700;margin-bottom:8px}
+  .k.strat{color:var(--accent)} .k.trade{color:var(--amber)}
+  .card ul{list-style:none}
+  .card li{font-size:13.5px;color:var(--ink-soft);padding:6px 0 6px 22px;position:relative;border-bottom:1px solid var(--line)}
+  .card li:last-child{border-bottom:none}
+  .card li::before{position:absolute;left:0;top:6px;font-weight:700}
+  .card.strat li::before{content:"→";color:var(--accent)}
+  .card.trade li::before{content:"⚖";color:var(--amber)}
+  .comp{margin-top:10px;background:var(--green-soft);border:1px solid #c5ead9;border-radius:9px;padding:10px 12px;font-size:13px;color:#0b6b4a}
+  .comp b{color:#08543a}
+
+  /* sales enablement strip */
+  .enable{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px}
+  .ecard{background:var(--green-soft);border:1px solid #c5ead9;border-radius:12px;padding:14px 16px}
+  .ecard .big{font-size:20px;font-weight:750;color:#08543a}
+  .ecard .lbl{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#0b6b4a;margin-top:2px}
+  .ecard .desc{font-size:12.5px;color:#0b6b4a;margin-top:5px;opacity:.9}
+
+  /* competitor table */
+  table{width:100%;border-collapse:collapse;background:var(--card);border:1px solid var(--line);border-radius:12px;overflow:hidden;font-size:13px}
+  th,td{text-align:left;padding:11px 13px;vertical-align:top;border-bottom:1px solid var(--line)}
+  th{background:#f0f2f6;font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);font-weight:700}
+  tr:last-child td{border-bottom:none}
+  td.arch{font-weight:700;color:var(--ink);width:20%}
+  td.model{width:34%;color:var(--ink-soft)}
+  .row-abacum{background:var(--accent-soft)}
+  .row-abacum td.arch{color:var(--accent)}
+  .sowhat{color:#08543a;font-weight:600}
+  .foot{margin-top:14px;font-size:11.5px;color:var(--muted)}
+  .foot b{color:var(--ink-soft)}
+  @media print{body{background:#fff;padding:0} .col,.card,table,.ecard{break-inside:avoid}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="top">
+    <div class="eyebrow">Abacum · Integrations</div>
+    <h1>How our integrations work — and why the model is different</h1>
+    <div class="sub">Roughly <b>50 native, first-party connectors</b> cover the high-frequency systems. <b>Finch</b> unifies HRIS, <b>Fivetran</b> covers the long tail, and an <b>Import API</b> plus <b>SFTP/S3</b> handle anything custom. The point underneath all of it: <b>the connection is the same for every customer</b>, so setup is self-serve — no per-customer engineering.</div>
+    <div class="headline">
+      <span class="tag">The one line</span>
+      <span><b>Self-serve is the biggest difference.</b> Competitors connect data one customer at a time (partners, an army of solution engineers). We made the architectural investment upfront so the flow after "Connect" is autonomous. The typing layer and the custom routes answer the "but we can't customize" objection without reintroducing that headcount.</span>
+    </div>
+  </header>
+
+  <h2 class="section">The architecture — source to model</h2>
+  <div class="flow">
+    <div class="col">
+      <h3>Source systems</h3>
+      <div class="src">ERP / GL — NetSuite, QuickBooks, Xero</div>
+      <div class="src">CRM — Salesforce, HubSpot</div>
+      <div class="src">HRIS / Payroll</div>
+      <div class="src">Niche / long-tail ERPs</div>
+      <div class="src">Enterprise / SAP (file-based)</div>
+    </div>
+    <div class="arrow">→</div>
+    <div class="col">
+      <h3>Connection layer</h3>
+      <div class="grouplabel">Direct &amp; brokered · self-serve</div>
+      <div class="path p-native">
+        <div class="pt">Native connectors <span class="badge">~50 · primary</span></div>
+        <div class="pd">First-party, high-frequency connectors we build and own — the common ERPs, CRM and core systems.</div>
+      </div>
+      <div class="path p-broker">
+        <div class="pt">Finch <span class="badge">Broker · HRIS</span></div>
+        <div class="pd">Unifies ~70 HRIS/payroll systems through one connection, so we don't build each individually.</div>
+      </div>
+      <div class="path p-broker">
+        <div class="pt">Fivetran <span class="badge">Broker · long tail</span></div>
+        <div class="pd">Covers obscure, low-frequency ERPs (e.g. niche construction systems). If a prospect has a weird system, Fivetran likely reaches it.</div>
+      </div>
+      <div class="grouplabel ind">Indirect · needs a tech team on the customer side</div>
+      <div class="path p-indirect">
+        <div class="pt">Import API <span class="badge">Custom</span></div>
+        <div class="pd">Push any dataset via custom endpoints when full control is required. Customer builds against it.</div>
+      </div>
+      <div class="path p-indirect">
+        <div class="pt">SFTP / S3 <span class="badge">Batch · not live</span></div>
+        <div class="pd">Customer drops files in a bucket; we pull automatically. Not a live connection — matters for enterprise / SAP.</div>
+      </div>
+      <div class="callout700"><b>~700 connectors</b> — ~50 native + Finch's ~70 HRIS + Fivetran's long tail. Competitors may use the same tools; the difference is how they're composed.</div>
+    </div>
+    <div class="arrow">→</div>
+    <div class="col typing">
+      <h3>Typing / configuration layer</h3>
+      <div class="pd" style="font-size:12.5px;color:var(--ink-soft)">One shared connector per system, then the customer shapes the data — no bespoke pipeline:</div>
+      <div style="margin-top:8px">
+        <span class="chip">Drop unused columns</span>
+        <span class="chip">Set data types</span>
+        <span class="chip">Map to dimensions</span>
+        <span class="chip">Trim for efficiency</span>
+      </div>
+      <div class="pd" style="margin-top:9px;font-size:11.5px">New fields are added globally and <b>ignored by default</b> — nothing breaks for existing customers. Standardization meets flexibility here, with no consultant in the loop.</div>
+    </div>
+    <div class="arrow">→</div>
+    <div class="col dest">
+      <h3>Abacum</h3>
+      <div class="d">Datasets</div>
+      <div class="d">Models &amp; drivers</div>
+      <div class="d">Reporting &amp; variance</div>
+      <div class="d">Abacum Intelligence</div>
+    </div>
+  </div>
+
+  <h2 class="section">The strategy — and the trade-off we made on purpose</h2>
+  <div class="grid2">
+    <div class="card strat">
+      <div class="k strat">Strategy · self-serve by design</div>
+      <ul>
+        <li>The connection is identical for every customer — so everything after "Connect" is an autonomous, self-served flow.</li>
+        <li>No engineers required to use it, no partner or SI to provision it.</li>
+        <li>We took the long-term view: heavy architectural investment upfront so integration isn't a per-deal cost later.</li>
+        <li>Result: faster time-to-value, lower TCO, fewer dependencies to renew.</li>
+      </ul>
+    </div>
+    <div class="card trade">
+      <div class="k trade">Trade-off · and how we cover it</div>
+      <ul>
+        <li>One shared connector per system → less bespoke customization out of the box.</li>
+        <li><b>Typing layer:</b> drop columns you don't need, type and map the rest — efficiency without a custom build.</li>
+        <li><b>Import API:</b> custom endpoints and coded logic when you genuinely need them (customer tech team required).</li>
+        <li><b>SFTP / S3:</b> file-based ingestion for enterprise / SAP where a live connection isn't available.</li>
+      </ul>
+      <div class="comp"><b>Net:</b> standardized and self-serve by default; customization on demand — without reintroducing the army of solution engineers.</div>
+    </div>
+  </div>
+
+  <div class="enable">
+    <div class="ecard">
+      <div class="big">48 hours</div>
+      <div class="lbl">Live demo on the prospect's real data</div>
+      <div class="desc">When integration coverage is the deciding factor, we can stand up a live instance connected to the prospect's actual systems.</div>
+    </div>
+    <div class="ecard">
+      <div class="big">~1 hour</div>
+      <div class="lbl">Coverage answer on any system</div>
+      <div class="desc">SCs check any ERP/system in a dedicated Slack channel; product responds yes/no within the hour. No deal is lost on integration coverage.</div>
+    </div>
+  </div>
+
+  <h2 class="section">Versus the alternatives — by archetype</h2>
+  <table>
+    <thead>
+      <tr><th>Archetype</th><th>How integrations work there</th><th>So what for Abacum</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="arch">One-by-one custom</td>
+        <td class="model">"We connect to anything" — because an army of solution engineers wires up each customer's APIs by hand. Fast to promise, heavy CapEx, fragile to maintain.</td>
+        <td class="sowhat">Our connection is built once for everyone. We answer the same coverage question in an hour and demo on real data in 48h — without the headcount.</td>
+      </tr>
+      <tr>
+        <td class="arch">Partner / consultant-led</td>
+        <td class="model">Each connector is a scoped implementation run by an SI or partner; changes route back through them.</td>
+        <td class="sowhat">Self-serve after "Connect." No partner tax to scope, pay, or renew — finance owns the pipeline.</td>
+      </tr>
+      <tr>
+        <td class="arch">iPaaS-orchestrated</td>
+        <td class="model">Flexible, but the customer owns building and babysitting flows in a middleware layer. High operating burden.</td>
+        <td class="sowhat">We give the flexibility (Import API) without making finance operate an integration platform.</td>
+      </tr>
+      <tr class="row-abacum">
+        <td class="arch">Abacum</td>
+        <td class="model">Native-first, brokered where it makes sense (Finch, Fivetran), custom via Import API / SFTP-S3. Customer shapes data in the typing layer. Same connection for everyone.</td>
+        <td class="sowhat">Standardized and self-serve by default; flexible on demand. The customization objection is answered without adding a consultant.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="foot">
+    <b>Talk track for Pier:</b> lead with self-serve — the connection is the same for every customer, so setup is autonomous and no engineers are needed. Frame the upfront architectural investment as the reason we don't carry a per-deal integration cost. When the buyer pushes on customization, pivot to the typing layer (efficiency) and the Import API / SFTP-S3 routes (custom, customer tech team). Close on the sales weapons: ~1h coverage answer and the 48h live demo. Archetypes shown instead of named vendors so the framing stays durable.
+  </div>
+
+</div>
+</body>
+</html>
