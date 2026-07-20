@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fiscal Year Configurator — 7 Cases</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  background: #F9FAFB;
+  color: #111827;
+  line-height: 1.5;
+  padding: 24px;
+}
+.root {
+  max-width: 1200px;
+  margin: 0 auto;
+  background: #ffffff;
+  border: 1px solid #E5E7EB;
+  border-radius: 12px;
+  padding: 24px;
+}
+h1 { font-size: 20px; font-weight: 600; margin-bottom: 4px; color: #111827; }
+.subtitle { font-size: 13px; color: #6B7280; margin-bottom: 20px; }
+.sl { font-size: 10px; color: #6B7280; text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 6px; font-weight: 600; }
+.top { margin-bottom: 20px; }
+
+.start-month-row { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; padding: 12px 14px; background: #F9FAFB; border: 1px solid #E5E7EB; border-radius: 10px; }
+.start-month-row label { font-size: 11px; color: #6B7280; text-transform: uppercase; letter-spacing: 0.07em; font-weight: 600; }
+.start-month-row select { font-size: 13px; padding: 6px 10px; border: 1px solid #D1D5DB; border-radius: 6px; background: #ffffff; color: #111827; cursor: pointer; font-family: inherit; font-weight: 500; min-width: 140px; }
+
+.case-row { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; margin-bottom: 16px; }
+.case-btn { padding: 10px 4px; border-radius: 8px; cursor: pointer; text-align: center; transition: all 0.12s; background: #ffffff; border: 1px solid #D1D5DB; font-family: inherit; }
+.case-btn:hover:not(.on) { background: #F3F4F6; border-color: #9CA3AF; }
+.case-btn.on { background: #0F172A; border-color: #0F172A; }
+.case-btn .ct { font-size: 10px; display: block; margin-bottom: 3px; color: #6B7280; font-weight: 400; }
+.case-btn .cd { font-size: 14px; font-weight: 600; color: #111827; display: block; }
+.case-btn .cy { font-size: 9px; color: #9CA3AF; display: block; margin-top: 2px; font-weight: 500; }
+.case-btn.on .ct { color: #94A3B8; }
+.case-btn.on .cd { color: #ffffff; }
+.case-btn.on .cy { color: #64748B; }
+
+.settings { display: grid; grid-template-columns: 1.5fr 1fr 1.7fr; gap: 16px; margin-bottom: 16px; padding: 14px; background: #F9FAFB; border: 1px solid #E5E7EB; border-radius: 10px; }
+.set-group { display: flex; flex-direction: column; gap: 6px; }
+.seg { display: flex; gap: 5px; flex-wrap: wrap; }
+.sb { font-size: 11px; padding: 6px 12px; border-radius: 6px; cursor: pointer; background: #ffffff; color: #111827; border: 1px solid #D1D5DB; font-weight: 500; transition: all 0.1s; font-family: inherit; }
+.sb:hover:not(.on) { background: #F3F4F6; border-color: #9CA3AF; }
+.sb.on { background: #0F172A; color: #ffffff; border-color: #0F172A; }
+
+.summary { display: flex; align-items: center; gap: 16px; margin-bottom: 16px; padding: 12px 16px; border: 1px solid #E5E7EB; border-radius: 8px; flex-wrap: wrap; background: #ffffff; }
+.sum-item { font-size: 12px; color: #111827; }
+.sum-item span { color: #6B7280; margin-right: 4px; }
+.sum-item strong { color: #111827; font-weight: 600; }
+.badge { font-size: 11px; padding: 3px 10px; border-radius: 20px; background: #FEF3C7; color: #78350F; font-weight: 600; }
+.badge.w53 { background: #FEE2E2; color: #7F1D1D; }
+
+.legend { display: grid; grid-template-columns: repeat(6, 1fr); gap: 5px; margin-bottom: 16px; }
+.li { display: flex; align-items: center; gap: 5px; font-size: 10px; padding: 4px 8px; border-radius: 4px; font-weight: 500; }
+.ld { width: 9px; height: 9px; border-radius: 2px; flex-shrink: 0; }
+
+.year-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+.cb { padding: 8px; border: 1px solid #E5E7EB; border-radius: 8px; background: #ffffff; }
+.cb-hd { font-size: 11px; font-weight: 600; margin-bottom: 6px; display: flex; justify-content: space-between; align-items: center; color: #111827; }
+.cb-bd { font-size: 9px; padding: 2px 7px; border-radius: 20px; font-weight: 600; }
+table.mcal { width: 100%; border-collapse: collapse; }
+table.mcal th { font-size: 9px; color: #6B7280; font-weight: 500; text-align: center; padding: 2px 0 3px; width: 12%; }
+table.mcal th.wt { width: 14%; text-align: right; padding-right: 3px; }
+table.mcal td { text-align: center; padding: 2px 0; font-size: 10px; height: 19px; color: #111827; }
+table.mcal td.wn { font-size: 8px; color: #9CA3AF; text-align: right; padding-right: 3px; font-weight: 500; }
+table.mcal td.out { color: #D1D5DB; }
+.tr { outline: 1.5px solid #0F172A; outline-offset: -1px; border-radius: 2px; }
+
+@media (max-width: 900px) {
+  .year-grid { grid-template-columns: repeat(2, 1fr); }
+  .settings { grid-template-columns: 1fr; }
+  .legend { grid-template-columns: repeat(3, 1fr); }
+}
+@media (max-width: 600px) {
+  .year-grid { grid-template-columns: 1fr; }
+  .case-row { grid-template-columns: repeat(4, 1fr); }
+  .legend { grid-template-columns: repeat(2, 1fr); }
+}
+</style>
+</head>
+<body>
+<div class="root">
+<h1>Fiscal year configurator</h1>
+<p class="subtitle">Visualize how 7 different cases (day the FY starts on) interact with anchor rules, week start, and week definition.</p>
+
+<div class="top">
+  <div class="start-month-row">
+    <label>FY start month</label>
+    <select id="startMonth">
+      <option value="0">January</option>
+      <option value="1">February</option>
+      <option value="2">March</option>
+      <option value="3">April</option>
+      <option value="4">May</option>
+      <option value="5">June</option>
+      <option value="6">July</option>
+      <option value="7">August</option>
+      <option value="8">September</option>
+      <option value="9">October</option>
+      <option value="10">November</option>
+      <option value="11">December</option>
+    </select>
+    <span style="font-size: 12px; color: #6B7280;" id="startMonthInfo"></span>
+  </div>
+
+  <div class="sl" id="caseSectionLabel">Pick a case: day of week Jan 1 falls on</div>
+  <div class="case-row" id="caseRow"></div>
+
+  <div class="settings">
+    <div class="set-group">
+      <div class="sl">Start anchor rule</div>
+      <div class="seg">
+        <button class="sb on" data-g="an" data-v="nearest">Nearest weekday to 1st</button>
+        <button class="sb" data-g="an" data-v="last">Last weekday of prior month</button>
+      </div>
+    </div>
+    <div class="set-group">
+      <div class="sl">Week start day</div>
+      <div class="seg">
+        <button class="sb on" data-g="wd" data-v="1">Mon</button>
+        <button class="sb" data-g="wd" data-v="0">Sun</button>
+      </div>
+    </div>
+    <div class="set-group">
+      <div class="sl">Week definition</div>
+      <div class="seg" id="wfRow">
+        <button class="sb on" data-g="wf" data-v="majority">Majority rule</button>
+        <button class="sb" data-g="wf" data-v="fixed">4-4-5</button>
+        <button class="sb" data-g="wf" data-v="fixed454">4-5-4</button>
+        <button class="sb" data-g="wf" data-v="fixed544">5-4-4</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="summary" id="summary"></div>
+  <div class="legend" id="legend"></div>
+</div>
+
+<div class="year-grid" id="yearGrid"></div>
+</div>
+
+<script>
+const MN=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const MF=['January','February','March','April','May','June','July','August','September','October','November','December'];
+const DOW_FULL=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+const DOW=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+
+const MC_BG=['#DBEAFE','#DCFCE7','#FEE2E2','#FEF3C7','#EDE9FE','#CCFBF1','#FCE7F3','#BFDBFE','#BBF7D0','#FECACA','#FDE68A','#DDD6FE'];
+const MC_TXT=['#1E3A8A','#14532D','#7F1D1D','#78350F','#3730A3','#134E4A','#831843','#1E3A8A','#14532D','#7F1D1D','#78350F','#3730A3'];
+const MC_DK=['#1D4ED8','#15803D','#B91C1C','#B45309','#6D28D9','#0F766E','#9D174D','#1D4ED8','#15803D','#B91C1C','#B45309','#6D28D9'];
+
+let S={startMonth:0,caseIdx:3,an:'nearest',wd:1,wf:'majority',pat:'445'};
+let CASES=[];
+let dayOwner={};
+
+function addD(d,n){let r=new Date(d);r.setDate(r.getDate()+n);return r;}
+function cD(d){let r=new Date(d);r.setHours(0,0,0,0);return r;}
+function fD(d){return MN[d.getMonth()]+' '+d.getDate()+', '+d.getFullYear();}
+function dKey(d){return d.getFullYear()+'-'+d.getMonth()+'-'+d.getDate();}
+
+function findYearForDayOfWeek(startMonth, targetDow, reference){
+  let best=reference, bestDiff=Infinity;
+  for(let y=reference-6; y<=reference+10; y++){
+    let d=new Date(y,startMonth,1);
+    if(d.getDay()===targetDow){
+      let diff=Math.abs(y-reference);
+      if(diff<bestDiff || (diff===bestDiff && y>best)){
+        bestDiff=diff;
+        best=y;
+      }
+    }
+  }
+  return best;
+}
+
+function computeCases(startMonth){
+  let cases=[];
+  let daysOfWeek=[1,2,3,4,5,6,0];
+  let dayNames=['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
+  daysOfWeek.forEach((dow,idx)=>{
+    let year=findYearForDayOfWeek(startMonth,dow,2026);
+    cases.push({n:idx+1,day:dayNames[idx],dow,year});
+  });
+  return cases;
+}
+
+function anchor(year,startMonth,wday,rule){
+  if(rule==='nearest'){
+    let d=new Date(year,startMonth,1),dow=d.getDay(),diff=wday-dow;
+    if(diff>3)diff-=7;if(diff<-3)diff+=7;
+    d.setDate(1+diff);return d;
+  } else {
+    let d=new Date(year,startMonth,0);
+    while(d.getDay()!==wday)d.setDate(d.getDate()-1);
+    return d;
+  }
+}
+
+function calcMaj(fyStart,nw,startMonth){
+  let m=[];for(let i=0;i<12;i++)m.push(0);
+  for(let w=0;w<nw;w++){
+    let mid=addD(fyStart,w*7+3);
+    let fmi=((mid.getMonth()-startMonth)+12)%12;
+    if(fmi<12)m[fmi]++;
+  }
+  return m;
+}
+
+function calcFix(nw,pat){
+  let p=pat.split('').map(Number);
+  let b=[p[0],p[1],p[2],p[0],p[1],p[2],p[0],p[1],p[2],p[0],p[1],p[2]];
+  if(nw===53)b[11]++;
+  return b;
+}
+
+function buildOwnership(fyStart,nw,startMonth,wf,pat){
+  dayOwner={};
+  if(wf==='majority'){
+    for(let w=0;w<nw;w++){
+      let ws=cD(addD(fyStart,w*7)),we=cD(addD(fyStart,w*7+6));
+      let mid=addD(ws,3);
+      let fmi=((mid.getMonth()-startMonth)+12)%12;
+      for(let d=new Date(ws);d<=we;d.setDate(d.getDate()+1)){
+        let k=dKey(d);
+        dayOwner[k]={fmi,wn:w+1,isS:d.getTime()===ws.getTime(),isE:d.getTime()===we.getTime()};
+      }
+    }
+  } else {
+    let pattern=calcFix(nw,pat);
+    let wIdx=0;
+    for(let fmi=0;fmi<12;fmi++){
+      for(let mw=0;mw<pattern[fmi];mw++){
+        let ws=cD(addD(fyStart,wIdx*7)),we=cD(addD(fyStart,wIdx*7+6));
+        for(let d=new Date(ws);d<=we;d.setDate(d.getDate()+1)){
+          let k=dKey(d);
+          dayOwner[k]={fmi,wn:wIdx+1,isS:d.getTime()===ws.getTime(),isE:d.getTime()===we.getTime()};
+        }
+        wIdx++;
+      }
+    }
+  }
+}
+
+function getMonthCells(year,month,wday){
+  let fday=new Date(year,month,1);
+  let lday=new Date(year,month+1,0);
+  let off=((fday.getDay()-wday)+7)%7;
+  let cells=[];
+  for(let i=0;i<off;i++)cells.push(null);
+  for(let d=1;d<=lday.getDate();d++)cells.push(new Date(year,month,d));
+  while(cells.length%7!==0)cells.push(null);
+  let rows=[];for(let r=0;r<cells.length/7;r++)rows.push(cells.slice(r*7,r*7+7));
+  return rows;
+}
+
+function renderMiniCal(calYear,calMonth,fmi,wday){
+  let dn=wday===1?['Mo','Tu','We','Th','Fr','Sa','Su']:['Su','Mo','Tu','We','Th','Fr','Sa'];
+  let today=cD(new Date());
+  let rows=getMonthCells(calYear,calMonth,wday);
+
+  let wks=new Set();
+  for(let k in dayOwner){if(dayOwner[k].fmi===fmi)wks.add(dayOwner[k].wn);}
+
+  let html='<div class="cb">';
+  html+='<div class="cb-hd"><span>'+MN[calMonth]+' '+calYear+'</span>';
+  html+='<span class="cb-bd" style="background:'+MC_BG[fmi]+';color:'+MC_TXT[fmi]+';">'+wks.size+'w</span></div>';
+  html+='<table class="mcal"><thead><tr><th class="wt"></th>';
+  dn.forEach(d=>html+='<th>'+d+'</th>');
+  html+='</tr></thead><tbody>';
+
+  rows.forEach(row=>{
+    if(!row.some(c=>c))return;
+    let wn='';
+    for(let c of row){if(!c)continue;let k=dKey(c);if(dayOwner[k]){wn='W'+dayOwner[k].wn;break;}}
+    html+='<tr><td class="wn">'+wn+'</td>';
+    row.forEach(cell=>{
+      if(!cell){html+='<td></td>';return;}
+      let k=dKey(cell);
+      let isToday=cell.getTime()===today.getTime();
+      if(!dayOwner[k]){html+='<td class="out'+(isToday?' tr':'')+'">'+cell.getDate()+'</td>';return;}
+      let {fmi,isS,isE}=dayOwner[k];
+      let bg=MC_BG[fmi],tc=MC_TXT[fmi];
+      let style='background:'+bg+';color:'+tc+';';
+      if(isS){style+='border-radius:3px 0 0 3px;background:'+MC_DK[fmi]+';color:#fff;font-weight:600;';}
+      else if(isE){style+='border-radius:0 3px 3px 0;';}
+      html+='<td style="'+style+'" class="'+(isToday?'tr':'')+'">'+cell.getDate()+'</td>';
+    });
+    html+='</tr>';
+  });
+  html+='</tbody></table></div>';
+  return html;
+}
+
+function renderCases(){
+  let html='';
+  CASES.forEach((c,i)=>{
+    html+='<button class="case-btn'+(i===S.caseIdx?' on':'')+'" onclick="setCase('+i+')">';
+    html+='<span class="ct">Case '+c.n+'</span>';
+    html+='<span class="cd">'+c.day.substring(0,3)+'</span>';
+    html+='<span class="cy">FY'+c.year+'</span>';
+    html+='</button>';
+  });
+  document.getElementById('caseRow').innerHTML=html;
+}
+
+function setCase(i){S.caseIdx=i;render();}
+
+function getFyMonths(startMonth,fyYear){
+  let out=[];
+  for(let i=0;i<12;i++){
+    let totalM=startMonth+i;
+    let calM=totalM%12;
+    let calY=fyYear+Math.floor(totalM/12);
+    out.push({calM,calY,fmi:i});
+  }
+  return out;
+}
+
+function render(){
+  CASES=computeCases(S.startMonth);
+  if(S.caseIdx>=CASES.length)S.caseIdx=0;
+  renderCases();
+
+  document.getElementById('caseSectionLabel').textContent='Pick a case: day of week '+MN[S.startMonth]+' 1 falls on';
+
+  let c=CASES[S.caseIdx];
+  let year=c.year;
+  let fyStart=anchor(year,S.startMonth,S.wd,S.an);
+  let nextStart=anchor(year+1,S.startMonth,S.wd,S.an);
+  let days=Math.round((nextStart-fyStart)/86400000);
+  let total=Math.round(days/7);
+  if(total<52)total=52;if(total>53)total=53;
+  let is53=total===53;
+  let fyEnd=cD(addD(fyStart,total*7-1));
+
+  buildOwnership(fyStart,total,S.startMonth,S.wf,S.pat);
+
+  let wkPerMonth=S.wf==='majority'?calcMaj(fyStart,total,S.startMonth):calcFix(total,S.pat);
+  let firstDayOfFY=new Date(year,S.startMonth,1);
+
+  document.getElementById('startMonthInfo').textContent='FY '+year+' runs '+MN[S.startMonth]+' '+year+' to '+MN[(S.startMonth+11)%12]+' '+(S.startMonth===0?year:year+1);
+
+  let sumHtml='';
+  sumHtml+='<div class="sum-item"><span>FY year:</span><strong>'+year+'</strong></div>';
+  sumHtml+='<div class="sum-item"><span>'+MN[S.startMonth]+' 1 falls on:</span><strong>'+DOW_FULL[firstDayOfFY.getDay()]+'</strong></div>';
+  sumHtml+='<div class="sum-item"><span>FY start (anchored):</span><strong>'+fD(fyStart)+'</strong></div>';
+  sumHtml+='<div class="sum-item"><span>FY end:</span><strong>'+fD(fyEnd)+'</strong></div>';
+  sumHtml+='<span class="badge'+(is53?' w53':'')+'">'+total+' weeks</span>';
+  document.getElementById('summary').innerHTML=sumHtml;
+
+  let legHtml='';
+  for(let i=0;i<12;i++){
+    let calM=(S.startMonth+i)%12;
+    legHtml+='<div class="li" style="background:'+MC_BG[i]+';color:'+MC_TXT[i]+';">';
+    legHtml+='<div class="ld" style="background:'+MC_DK[i]+';"></div>';
+    legHtml+='<span>'+MN[calM]+' · '+wkPerMonth[i]+'w</span></div>';
+  }
+  document.getElementById('legend').innerHTML=legHtml;
+
+  let fyMonths=getFyMonths(S.startMonth,year);
+  let yh='';
+  fyMonths.forEach(({calM,calY,fmi})=>{yh+=renderMiniCal(calY,calM,fmi,S.wd);});
+  document.getElementById('yearGrid').innerHTML=yh;
+}
+
+document.getElementById('startMonth').addEventListener('change',e=>{
+  S.startMonth=+e.target.value;
+  S.caseIdx=3;
+  render();
+});
+
+document.querySelectorAll('.sb').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    let g=btn.dataset.g;
+    document.querySelectorAll('[data-g="'+g+'"]').forEach(b=>b.classList.remove('on'));
+    btn.classList.add('on');
+    let v=btn.dataset.v;
+    if(g==='an')S.an=v;
+    if(g==='wd')S.wd=+v;
+    if(g==='wf'){
+      if(v==='majority'){S.wf='majority';}
+      else if(v==='fixed'){S.wf='fixed';S.pat='445';}
+      else if(v==='fixed454'){S.wf='fixed';S.pat='454';}
+      else if(v==='fixed544'){S.wf='fixed';S.pat='544';}
+    }
+    render();
+  });
+});
+
+render();
+</script>
+</body>
+</html>
